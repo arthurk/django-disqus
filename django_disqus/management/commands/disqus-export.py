@@ -2,7 +2,7 @@ from optparse import make_option
 import urllib
 import urllib2
 
-import simplejson as json
+from django.utils import simplejson as json
 
 from django.core.management.base import NoArgsCommand
 

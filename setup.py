@@ -35,7 +35,7 @@ for dirpath, dirnames, filenames in os.walk(app_name):
 
 setup(name='django-'+app_name,
       version='0.1',
-      description='Improt and export from Disqus',
+      description='Import and export from Disqus',
       author='Arthur Koziel',
       author_email='arthur@arthurkoziel.com',
       url='http://arthurkoziel.com',

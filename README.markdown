@@ -3,22 +3,22 @@ django-disqus
 
 **WORK IN PROGRESS!**
 
-Management commands for Django which:
+Features
+--------
 
-    * Export django.contrib.comments to DISQUS.
+    * Export comments from django.contrib.comments to DISQUS.
+    * Dump data from DISQUS in local JSON file.
 
 Requirements
 ------------
 
-Django 1.0.2
-simplejson 2.0.7
+ * Django 1.0.2
 
 Installation
 ------------
 
-Put 'django\_disqus' into your 'INSTALLED_APPS'
-Add "DISQUS\_API_KEY" to your settings. You can  [http://disqus.com/api/get_my_key/][get your API key here].
-Add "DISQUS\_WEBSITE_SHORTNAME" to your settings.
+    1. Add 'django\_disqus' to your INSTALLED\_APPS.
+    2. Add "DISQUS\_API\_KEY" and "DISQUS\_WEBSITE\_SHORTNAME" to your settings file. You can [http://disqus.com/api/get_my_key/][get your API key here].
 
 Usage
 -----
@@ -26,11 +26,14 @@ Usage
 To export comments to disqus:
 
     python manage.py disqus-export
-    
-Options
--------
 
-    -v = Output verbosity. 1=minimal, 2=normal.
+To dump the data from disqus:
+    
+    python manage.py disqus-dumpdata
+    
+You can pass the --indent option to specify the indentation of the output:
+    
+    python manage.py disqus-dumpdata --indent=4
     
 Troubleshooting
 ---------------
@@ -39,4 +42,4 @@ Make sure that:
 
     * Each content object has a get\_absolute\_url() method.
     * Your Site has the correct domain set.
-    * The content objects has a __unicode__ method
+    * The content object has a __unicode__ method
