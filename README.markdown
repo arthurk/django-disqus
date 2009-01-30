@@ -6,8 +6,8 @@ django-disqus
 Features
 --------
 
-    * Export comments from django.contrib.comments to DISQUS.
-    * Dump data from DISQUS in local JSON file.
+* Export comments from django.contrib.comments to DISQUS.
+* Dump data from DISQUS in local JSON file.
 
 Requirements
 ------------
@@ -17,8 +17,8 @@ Requirements
 Installation
 ------------
 
-    1. Add 'django\_disqus' to your INSTALLED\_APPS.
-    2. Add "DISQUS\_API\_KEY" and "DISQUS\_WEBSITE\_SHORTNAME" to your settings file. You can [http://disqus.com/api/get_my_key/][get your API key here].
+1. Add 'django\_disqus' to your INSTALLED\_APPS.
+2. Add "DISQUS\_API\_KEY" and "DISQUS\_WEBSITE\_SHORTNAME" to your settings file. You can [http://disqus.com/api/get_my_key/][get your API key here].
 
 Usage
 -----
@@ -40,6 +40,6 @@ Troubleshooting
 
 Make sure that:
 
-    * Each content object has a get\_absolute\_url() method.
-    * Your Site has the correct domain set.
-    * The content object has a __unicode__ method
+* Each content object has a get\_absolute\_url() method.
+* Your Site has the correct domain set.
+* The content object has a __unicode__ method
