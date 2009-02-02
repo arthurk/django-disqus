@@ -1,2 +1,4 @@
 build/
-example_project/
+dev/
+dist/
+django_disqus.egg-info/
