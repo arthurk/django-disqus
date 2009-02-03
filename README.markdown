@@ -37,12 +37,42 @@ You can pass the --indent option to specify the indentation of the output:
 
 ### Templatetags
 
-The following templatetags are available:
-    
-- **disqus\_dev**: Returns js that sets variables to display comments on local dev server
-- **disqus\_num\_replies**: Returns js to display comment count
-- **disqus\_show\_comments**: Returns js to display comment form
-    
+#### disqus\_dev
+
+In order to get comments working on a local development server you need to 
+include the templatetag in your website's `<head>` tag:
+
+    <head>
+      <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+      <title>fooar</title>
+      {% load disqus_tags %}
+      {% disqus_dev %}
+    </head>
+
+It sets `disqus_developer` to `1` and `disqus_url` to the current site's 
+url if the `DEBUG` setting of your project is set to `True`.
+
+#### **disqus\_num\_replies**
+
+Returns the JavaScript necessary to show the current comment count.
+The JavaScript will replace all permalinks with the `#disqus_thread` anchor 
+with the current comment count.
+
+    <a href="{{ object.get_absolute_url }}#disqus_thread">View Comments</a>
+
+Include the templatetag at the bottom of your website before the closing 
+`</body>` tag:
+
+    {% load disqus_tags %}
+    {% disqus_num_replies %}
+
+#### **disqus\_show\_comments** 
+
+Include the templatetag in your HTML where you'd like the comments to appear.
+
+    {% load disqus_tags %}
+    {% disqus_show_comments %}
+
 ## Troubleshooting
 
 Make sure that:
