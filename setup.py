@@ -4,11 +4,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-disqus',
-    version='0.1',
+    version='0.1dev',
     description='DISQUS commands for Django',
     author='Arthur Koziel',
     author_email='arthur@arthurkoziel.com',
     url='http://github.com/arthurk/django-disqus',
+    license='New BSD License',
     classifiers=[
       'Development Status :: 3 - Alpha',
       'Environment :: Plugins',
@@ -19,4 +20,5 @@ setup(
       'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=find_packages(),
+    zip_safe=False,
 )
