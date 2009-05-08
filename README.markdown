@@ -1,86 +1,101 @@
 # django-disqus
 
-**WORK IN PROGRESS!**
+django-disqus helps you to easily integrate DISQUS comments into your website.
 
 ## Features
 
-* Export comments from django.contrib.comments to DISQUS.
-* Dump data from DISQUS in local JSON file.
-* Templatetags
+* Export django.contrib.comments to DISQUS
+* Dump DISQUS into local JSON file
+* Templatetags to ease the integration
 
 ## Requirements
 
- * Django 1.0
+ * Django 1.0.x
 
 ## Installation
 
-1. Add 'disqus' to your INSTALLED\_APPS.
-2. Add "DISQUS\_API\_KEY" and "DISQUS\_WEBSITE\_SHORTNAME" to your settings file. You can [http://disqus.com/api/get_my_key/][get your API key here].
+1. Add `disqus` to your `INSTALLED_APPS` setting.
+2. Add `DISQUS_API_KEY` and `DISQUS_WEBSITE_SHORTNAME` to your settings.
 
-## Usage
+Refer to the [http://wiki.disqus.net/API](DISQUS API) documentation if you
+don't know how to get your API key.
 
-### Exporting comments
+You can find the shortname of your site on the DISQUS homepage in the right 
+sidebar under "_My Websites_".
 
-To export comments to disqus:
+Example:
 
-    python manage.py disqus-export
-
-### Dumping data
-
-To dump the data from disqus:
+    # settings.py
     
-    python manage.py disqus-dumpdata
+    INSTALLED_APPS = (
+        ...
+        'django.contrib.comments',
+        'disqus',
+    )
 
-You can pass the --indent option to specify the indentation of the output:
-    
-    python manage.py disqus-dumpdata --indent=4
+    DISQUS_API_KEY = 'FOOBARFOOBARFOOBARFOOBARFOOBARF'
+    DISQUS_WEBSITE_SHORTNAME = 'foobar'
+
+## Management Commands
+
+### disqus-export
+
+The `disqus-export` command exports comments from django.contrib.comments to 
+DISQUS.
+
+When exporting comments, make sure you have the domain of your Site set. Also
+the Model to which the comments are associated needs a `get_absolute_url()`
+method which returns the absolute url to the page the comments should
+appear on.
+
+Threaded comments are not supported.
+
+Options:
+
+* __-d/--dry-run__: Does not export any comments, but merely outputs the
+comments which would have been exported
+* __-v/--verbosity__: Output verbosity level; 0=minimal output, 1=normal output
+
+### disqus-dumpdata
+
+The `disqus-dumpdata` command dumps DISQUS comments into a local JSON file.
+
+Options:
+
+* __--indent__: Specifies the indent level to use when pretty-printing output
 
 ### Templatetags
 
 #### disqus\_dev
 
 In order to get comments working on a local development server you need to 
-include the templatetag in your website's `<head>` tag:
+include this templatetag in your website's `<head>`:
 
     <head>
       <meta http-equiv="Content-type" content="text/html; charset=utf-8">
       <title>fooar</title>
-      {% load disqus_tags %}
       {% disqus_dev %}
     </head>
 
-It sets `disqus_developer` to `1` and `disqus_url` to the current site's 
-url if the `DEBUG` setting of your project is set to `True`.
+If the `DEBUG` setting is set to `True` this sets the `disqus_developer` 
+variable to `1` to disable url validation. It also sets `disqus_url` 
+to the current Site's domain. Without this, it wouldn't be possible to display 
+the comment form locally.
 
 #### **disqus\_num\_replies**
 
-Returns the JavaScript necessary to show the current comment count.
-The JavaScript will replace all permalinks with the `#disqus_thread` anchor 
-with the current comment count.
+Returns the JavaScript necessary to replace all permalinks which have the 
+`#disqus_thread` anchor with the comment count for that url.
+
+Example:
 
     <a href="{{ object.get_absolute_url }}#disqus_thread">View Comments</a>
-
-Include the templatetag at the bottom of your website before the closing 
-`</body>` tag:
-
-    {% load disqus_tags %}
     {% disqus_num_replies %}
 
 #### **disqus\_show\_comments** 
 
-Include the templatetag in your HTML where you'd like the comments to appear.
+Returns the JavaScript necessary to display the comment form and comments.
 
-    {% load disqus_tags %}
+Example:
+
     {% disqus_show_comments %}
-
-## Troubleshooting
-
-Make sure that:
-
-* Each content object has a get\_absolute\_url() method.
-* Your Site has the correct domain set.
-* The content object has a __unicode__ method
-
-## TODO
-
-* `is_usable` for templatetags

@@ -35,7 +35,7 @@ class Command(NoArgsCommand):
         # Get the API key for the forum. Each forum has an unique API key
         forum_api_key = call('get_forum_api_key', 
                              {'user_api_key': settings.DISQUS_API_KEY, 
-                              'forum_id': forum['id']})
+                              'forum_id': data['forum']['id']})
         
         # Get the threads for a forum
         data['forum']['threads'] = call('get_thread_list', 
