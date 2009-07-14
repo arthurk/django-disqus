@@ -34,7 +34,7 @@ class Command(NoArgsCommand):
        	    current_site = RequestSite(request)
         
         verbosity = int(options.get('verbosity'))
-        dry_run = int(options.get('verbosity'))            
+        dry_run = int(options.get('dry_run'))            
         
         comments = self._get_comments_to_export()
         comments_count = comments.count()
