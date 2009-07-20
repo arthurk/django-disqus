@@ -1,6 +1,6 @@
 # django-disqus
 
-django-disqus helps you to easily integrate DISQUS comments into your website.
+Easily integrate [DISQUS](http://disqus.com) comments into your website.
 
 ## Features
 
@@ -10,23 +10,19 @@ django-disqus helps you to easily integrate DISQUS comments into your website.
 
 ## Requirements
 
- * Django 1.0.x
+ * Django 1.x
+ * Optional: Mock 0.5.0 (if you want to run the unit tests)
 
 ## Installation
 
-1. `easy_install django-disqus` or checkout the git repo.
+1. `easy_install django-disqus` or clone the git repo and run `python setup.py install`.
 2. Add `disqus` to your `INSTALLED_APPS` setting.
-3. Add `DISQUS_API_KEY` and `DISQUS_WEBSITE_SHORTNAME` to your settings.
+3. Add `DISQUS_API_KEY` and `DISQUS_WEBSITE_SHORTNAME` to your settings. You
+can [get your API key here](http://disqus.com/api/get_my_key/). The shortname 
+of your site can be found in the right sidebar ("My Websites") on the 
+[DISQUS homepage](http://disqus.com).
 
-Refer to the [http://wiki.disqus.net/API](DISQUS API) documentation if you
-don't know how to get your API key.
-
-You can find the shortname of your site on the DISQUS homepage in the right 
-sidebar under "_My Websites_".
-
-Example:
-
-    # settings.py
+Example settings.py:
     
     INSTALLED_APPS = (
         ...
