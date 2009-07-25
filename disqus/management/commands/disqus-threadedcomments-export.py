@@ -36,7 +36,7 @@ class Command(NoArgsCommand):
        	current_site = Site.objects.get_current()
         
         verbosity = int(options.get('verbosity'))
-        dry_run = int(options.get('dry_run'))            
+        dry_run = bool(options.get('dry_run'))            
         
         # Exporting Free Comments
         
