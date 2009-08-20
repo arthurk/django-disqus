@@ -117,62 +117,102 @@ class DisqusApi(object):
                                                               data))
         return res['message']
     
-    def get_forum_list(self):
-        """Returns a list of `Forum` objects associated with an API key"""
-        return [Forum(id=f['id'],
-                      shortname=f['shortname'], 
-                      name=f['name'], 
-                      created_at=f['created_at']) 
-                for f in self.call('get_forum_list', 
-                                   {'user_api_key': self.api_key})]
+    def get_all_data(self, shortname):
+        data = {}
+        forum_list = self.get_forum_list(raw=True)
+        try:
+            data['forum'] = [f for f in forum_list
+                             if f['shortname'] == shortname][0]
+        except IndexError:
+            raise Exception("Couldn't find forum '%s'. " % shortname + 
+                            "Please check your 'DISQUS_WEBSITE_SHORTNAME' setting.")
+        forum_api_key = self.get_forum_api_key(data['forum']['id'])
+        data['forum']['threads'] = self.get_thread_list(forum_api_key, raw=True)
+        for count, thread in enumerate(data['forum']['threads']):
+            #data['forum']['threads'][count]['posts'] = self.get_thread_posts(forum_api_key,
+            #                                      thread['id'],
+            #                                      raw=True)
+            print self.get_thread_posts(forum_api_key, thread['id'], raw=True)
+        return data
+        
+    def get_forum_list(self, raw=False):
+        """
+        Returns a list of `Forum` objects associated with an API key
+        """
+        results = self.call('get_forum_list', {'user_api_key': self.api_key})
+        if not raw:
+            results = [Forum(id=f['id'],
+                             shortname=f['shortname'], 
+                             name=f['name'], 
+                             created_at=f['created_at']) 
+                       for f in results]
+        return results
     
-    def get_forum_api_key(self, forum):
-        """Returns the forum API key for a `Forum`"""
+    def get_forum_api_key(self, forum_id):
+        """
+        Returns the forum API key for a `Forum`
+        """
         return self.call('get_forum_api_key', {'user_api_key': self.api_key, 
-                                                'forum_id': forum.id})
+                                               'forum_id': forum_id})
     
-    def get_thread_list(self, forum_api_key):
-        """Returns a list of `Thread` objects associated with an forum API key"""
-        return [Thread(id=t['id'], 
-                       allow_comments=t['allow_comments'], 
-                       created_at=t['created_at'],
-                       forum=t['forum'],
-                       hidden=t['hidden'], 
-                       identifier=t['identifier'], 
-                       slug=t['slug'], 
-                       title=t['title'], 
-                       url=t['url']) 
-                for t in self.call('get_thread_list', 
-                                   {'forum_api_key': forum_api_key})]
+    def get_thread_list(self, forum_api_key, raw=False):
+        """
+        Returns a list of `Thread` objects associated with an forum API key
+        """
+        results = self.call('get_thread_list', {'forum_api_key': forum_api_key})
+        if not raw:
+            results = [Thread(id=t['id'],
+                              allow_comments=t['allow_comments'],
+                              created_at=t['created_at'],
+                              forum=t['forum'],
+                              hidden=t['hidden'],
+                              identifier=t['identifier'],
+                              slug=t['slug'],
+                              title=t['title'],
+                              url=t['url'])
+                       for t in results]
+        return results
     
-    def get_thread_posts(self, forum_api_key, thread):
-        """Returns a list of `Thread` objects associated with an forum API key"""
+    def get_thread_posts(self, forum_api_key, thread_id, raw=False):
+        """
+        Returns a list of `Thread` objects associated with an forum API key
+        """
         posts = []
-        for post in self.call('get_thread_posts', {'forum_api_key': forum_api_key,
-                                                'thread_id': thread.id}):
+        for post in self.call('get_thread_posts', {
+                                'forum_api_key': forum_api_key,
+                                'thread_id': thread_id}):
             if post['is_anonymous']:
-                anonymous_author = AnonymousAuthor(name=post['anonymous_author']['name'],
-                                                   url=post['anonymous_author']['url'],
-                                                   email_hash=post['anonymous_author']['email_hash'])
                 author = None
+                if raw:
+                    anonymous_author = post['anonymous_author']
+                else:
+                    anonymous_author = AnonymousAuthor(
+                        name=post['anonymous_author']['name'],
+                        url=post['anonymous_author']['url'],
+                        email_hash=post['anonymous_author']['email_hash'])
             else:
-                author = Author(id=post['author']['id'],
-                                username=post['author']['username'],
-                                display_name=post['author']['display_name'],
-                                url=post['author']['url'],
-                                email_hash=post['author']['email_hash'],
-                                has_avatar=post['author']['has_avatar'])
                 anonymous_author = None
-            
-            posts.append(Post(id=post['id'], 
-                              forum=post['forum'], 
-                              thread=post['thread'],
-                              created_at=post['created_at'],
-                              message=post['message'], 
-                              shown=post['shown'], 
-                              points=post['points'], 
-                              is_anonymous=post['is_anonymous'], 
-                              anonymous_author=anonymous_author,
-                              author=author,
-                              parent_post=post['parent_post'],))
+                if raw:
+                    author = post['author']
+                else:
+                    author = Author(id=post['author']['id'],
+                                    username=post['author']['username'],
+                                    display_name=post['author']['display_name'],
+                                    url=post['author']['url'],
+                                    email_hash=post['author']['email_hash'],
+                                    has_avatar=post['author']['has_avatar'])
+            if not raw:
+                posts.append(Post(id=post['id'], 
+                                  forum=post['forum'], 
+                                  thread=post['thread'],
+                                  created_at=post['created_at'],
+                                  message=post['message'], 
+                                  shown=post['shown'], 
+                                  points=post['points'], 
+                                  is_anonymous=post['is_anonymous'], 
+                                  anonymous_author=anonymous_author,
+                                  author=author,
+                                  parent_post=post['parent_post'],))
+            else:
+                posts.append(post)
         return posts
