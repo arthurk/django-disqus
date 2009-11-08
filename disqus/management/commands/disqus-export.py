@@ -10,11 +10,8 @@ from disqus import call
 
 class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
-        make_option('-d', '--dry-run', action="store_true", dest="dry_run",
+        make_option('-d', '--dry-run', action="store_true", dest="dry_run", default=False,
                     help='Does not export any comments, but merely outputs the comments which would have been exported.'),
-        make_option('-v', '--verbosity', action='store', dest='verbosity', default='1',
-                    type='choice', choices=['0', '1',],
-                    help='Verbosity level; 0=minimal output, 1=normal output'),
     )
     
     help = 'Export django.contrib.comments to DISQUS'
@@ -34,7 +31,7 @@ class Command(NoArgsCommand):
        	    current_site = RequestSite(request)
         
         verbosity = int(options.get('verbosity'))
-        dry_run = int(options.get('dry_run'))            
+        dry_run = bool(options.get('dry_run'))
         
         comments = self._get_comments_to_export()
         comments_count = comments.count()
