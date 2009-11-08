@@ -10,7 +10,7 @@ from disqus import call
 
 class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
-        make_option('-d', '--dry-run', action="store_true", dest="dry_run", default=False,
+        make_option('-d', '--dry-run', action="store_true", dest="dry_run",
                     help='Does not export any comments, but merely outputs the comments which would have been exported.'),
     )
     
