@@ -12,9 +12,6 @@ class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
         make_option('-d', '--dry-run', action="store_true", dest="dry_run",
                     help='Does not export any comments, but merely outputs the comments which would have been exported.'),
-        make_option('-v', '--verbosity', action='store', dest='verbosity', default='1',
-                    type='choice', choices=['0', '1',],
-                    help='Verbosity level; 0=minimal output, 1=normal output'),
     )
     
     help = 'Export django-threadedcomments to DISQUS'
