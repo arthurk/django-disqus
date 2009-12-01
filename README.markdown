@@ -81,6 +81,33 @@ Show recent comments.
 * `avatar_size`: Size of the avatars (default: 32)
 * `shortname`: Use a different shortname than `settings.DISQUS_WEBSITE_SHORTNAME`
 
+### disqus\_top\_commenters
+
+Shows top commenters
+    
+    {% load disqus_tags %}
+    {% disqus_top_commenters %}
+
+##### Options
+
+* `num_items`: Number of comments to show (default: 3)
+* `avatar_size`: Size of the avatars (default: 32)
+* `shortname`: Use a different shortname than `settings.DISQUS_WEBSITE_SHORTNAME`
+* `hide_mod`: Set to 1 to hide moderators
+* `hide_avatars`: Set to 1 to hide avatars
+
+### disqus\_popular\_threads
+
+Shows most popular threads
+
+    {% load disqus_tags %}
+    {% disqus_popular_threads %}
+
+#### Options
+
+* `num_items`: Number of comments to show (default: 3)
+* `shortname`: Use a different shortname than `settings.DISQUS_WEBSITE_SHORTNAME`
+
 ## Management Commands
 
 ### disqus-export

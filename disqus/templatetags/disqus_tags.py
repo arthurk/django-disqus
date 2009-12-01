@@ -81,7 +81,33 @@ def disqus_recent_comments(num_items=3, avatar_size=32, shortname=''):
                num_items=num_items,
                avatar_size=avatar_size)
 
+def disqus_top_commenters(num_items=5, hide_mod=0, hide_avatars=0, avatar_size=32, shortname=''):
+    """
+    Returns the HTML/js code necessary to display top commenters
+    """
+    if not shortname:
+        shortname = settings.DISQUS_WEBSITE_SHORTNAME
+    return """
+    <script type="text/javascript" src="http://disqus.com/forums/%(shortname)s/top_commenters_widget.js?num_items=%(num_items)d&hide_mods=%(hide_mod)d&hide_avatars=%(hide_avatars)d&avatar_size=%(avatar_size)d"></script>
+    """ % dict(shortname=shortname,
+               num_items=num_items,
+               hide_mod=hide_mod,
+               hide_avatars=hide_avatars,
+               avatar_size=avatar_size)
+
+def disqus_popular_threads(num_items=5, shortname=''):
+    """
+    Returns the HTML/js code necessary to display top commenters
+    """
+    if not shortname:
+        shortname = settings.DISQUS_WEBSITE_SHORTNAME
+    return """
+    <script type="text/javascript" src="http://disqus.com/forums/%(shortname)s/popular_threads_widget.js?num_items=%(num_items)d"></script>
+    """ % dict(shortname=shortname,
+               num_items=num_items)
+
 register.simple_tag(disqus_dev)
 register.simple_tag(disqus_num_replies)
 register.simple_tag(disqus_show_comments)
 register.simple_tag(disqus_recent_comments)
+register.simple_tag(disqus_top_commenters)

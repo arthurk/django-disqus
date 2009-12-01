@@ -1,9 +1,10 @@
+*.pyc
+*.swp
+.Python
+bin/
 build/
 dev/
 dist/
 django_disqus.egg-info/
-.Python
-*.swp
-bin/
 include/
 lib/
