@@ -2,14 +2,16 @@
 
 Easily integrate [DISQUS](http://disqus.com) comments into your website.
 
-* Templatetags to ease the integration
-* Export comments from django.contrib.comments & django-threadedcomments to DISQUS
+* Templatetags
+* Export comments from django.contrib.comments and django-threadedcomments
 * Dump DISQUS JSON data into local file
+
+django-disqus is available open-source under the BSD license.
 
 ## Installation
 
-1. `easy_install django-disqus` or clone the git repo and run `python setup.py install`.
-2. Add `disqus` to your `INSTALLED_APPS` setting.
+1. `pip install django-disqus` or clone the repo and run `python setup.py install`
+2. Add `disqus` to your `INSTALLED_APPS`
 3. Add `DISQUS_API_KEY` and `DISQUS_WEBSITE_SHORTNAME` to your settings. You
 can [get your API key here](http://disqus.com/api/get_my_key/). The shortname 
 of your site can be found in the right sidebar ("My Websites") on the 
@@ -28,7 +30,7 @@ Example settings.py:
 
 ## Templatetags
 
-Load templatetags with `{% load disqus_tags %}`.
+Load the templatetags with `{% load disqus_tags %}`.
 
 ### disqus\_dev
 
@@ -58,7 +60,6 @@ Display comments and comment form.
 * `snippet`: Defines the page's content (article or blog post) to use as context.
 * `shortname`: Use a different shortname than `settings.DISQUS_WEBSITE_SHORTNAME`
 
-
 ### disqus\_num\_replies
 
 Replace all URLs that have the `#disqus_thread` anchor with their respective
@@ -83,7 +84,7 @@ Show recent comments.
 
 ### disqus\_top\_commenters
 
-Shows top commenters
+Shows top commenters.
     
     {% load disqus_tags %}
     {% disqus_top_commenters %}
@@ -98,7 +99,7 @@ Shows top commenters
 
 ### disqus\_popular\_threads
 
-Shows most popular threads
+Shows most popular threads.
 
     {% load disqus_tags %}
     {% disqus_popular_threads %}
