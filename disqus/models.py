@@ -1,5 +1,8 @@
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+from disqus.api import DisqusClient
 
 
 class Forum(models.Model):
@@ -19,6 +22,18 @@ class Forum(models.Model):
     def __unicode__(self):
         return self.name
 
+    @staticmethod
+    def import_from_api():
+        client = DisqusClient()
+        forums = client.get_forum_list(user_api_key=settings.DISQUS_API_KEY)
+        for forum in forums:
+            f, created = Forum.objects.get_or_create(id=forum['id'],
+                            defaults=dict(shortname=forum['shortname'],
+                                          name=forum['name']))
+            if not created:
+                f.shortname = forum['shortname']
+                f.name = forum['name']
+                f.save()
 
 class Thread(models.Model):
     id = models.CharField(primary_key=True, max_length=15,
