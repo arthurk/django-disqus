@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -27,13 +29,12 @@ class Forum(models.Model):
         client = DisqusClient()
         forums = client.get_forum_list(user_api_key=settings.DISQUS_API_KEY)
         for forum in forums:
-            f, created = Forum.objects.get_or_create(id=forum['id'],
-                            defaults=dict(shortname=forum['shortname'],
-                                          name=forum['name']))
-            if not created:
-                f.shortname = forum['shortname']
-                f.name = forum['name']
-                f.save()
+            f = Forum(
+                id = forum['id'],
+                shortname = forum['shortname'],
+                name = forum['name'])
+            f.save()
+
 
 class Thread(models.Model):
     id = models.CharField(primary_key=True, max_length=15,
@@ -65,6 +66,26 @@ class Thread(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    @staticmethod
+    def import_from_api(forum):
+        client = DisqusClient()
+        threads = client.get_thread_list(user_api_key=settings.DISQUS_API_KEY,
+                                         forum_id=forum.id,
+                                         limit=65000, start=0)
+        for thread in threads:
+            date = datetime.strptime(thread['created_at'],
+                        '%Y-%m-%dT%H:%M').strftime("%Y-%m-%d %H:%M")
+            t = Thread(
+                id = thread['id'],
+                forum = forum,
+                slug = thread['slug'],
+                title = thread['title'],
+                created_at = date,
+                allow_comments = thread['allow_comments'],
+                url = thread['url'],
+                identifier = thread['identifier'][0])
+            t.save()
 
 
 class Post(models.Model):
