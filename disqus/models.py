@@ -1,10 +1,5 @@
-from datetime import datetime
-
-from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
-from disqus.api import DisqusClient
 
 
 class Forum(models.Model):
@@ -23,17 +18,6 @@ class Forum(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    @staticmethod
-    def import_from_api():
-        client = DisqusClient()
-        forums = client.get_forum_list(user_api_key=settings.DISQUS_API_KEY)
-        for forum in forums:
-            f = Forum(
-                id = forum['id'],
-                shortname = forum['shortname'],
-                name = forum['name'])
-            f.save()
 
 
 class Thread(models.Model):
@@ -67,6 +51,7 @@ class Thread(models.Model):
     def __unicode__(self):
         return self.title
 
+    """
     @staticmethod
     def import_from_api(forum):
         client = DisqusClient()
@@ -86,6 +71,7 @@ class Thread(models.Model):
                 url = thread['url'],
                 identifier = thread['identifier'][0])
             t.save()
+    """
 
 
 class Post(models.Model):
@@ -118,6 +104,16 @@ class Post(models.Model):
     def __unicode__(self):
         return "%s object: '%s'" % (self.__class__.__name__, self.id)
 
+    """
+    @staticmethod
+    def import_from_api(forum):
+        client = DisqusClient()
+        posts = client.get_forum_posts(user_api_key=settings.DISQUS_API_KEY,
+                               forum_id=forum.id,
+                               limit=65000)
+        for post in posts:
+            print post
+    """
 
 class AnonymousAuthor(models.Model):
     name = models.CharField(max_length=200,
