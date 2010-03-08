@@ -110,6 +110,36 @@ Types can be combined by separating them with a comma. Example:
 </div>
 <div class="section" id="disqus-export">
 <h2>disqus_export<a class="headerlink" href="#disqus-export" title="Permalink to this headline">¶</a></h2>
+<p>Export comments from contrib.comments to DISQUS.</p>
+<p>Before you run this command, make sure that <tt class="docutils literal"><span class="pre">django.contrib.comments</span></tt>
+and <tt class="docutils literal"><span class="pre">django.contrib.sites</span></tt> are listed in your project&#8217;s <tt class="docutils literal"><span class="pre">INSTALLED_APPS</span></tt>.
+You also need to change the domain of your Site from <tt class="docutils literal"><span class="pre">example.org</span></tt> to your
+real domain.</p>
+<p>The comment&#8217;s associated content object must have the following two methods:</p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">get_absolute_url</span></tt>: Should return the URL of an object. For example:
+<tt class="docutils literal"><span class="pre">/2009/10/10/foo</span></tt>. This should not include the domain name</li>
+<li><tt class="docutils literal"><span class="pre">__unicode__</span></tt>: Unicode representation of the object</li>
+</ul>
+</blockquote>
+<p>The command will export all comments that have the <tt class="docutils literal"><span class="pre">is_public</span></tt>
+attribute set to <tt class="xref docutils literal"><span class="pre">True</span></tt> and <tt class="docutils literal"><span class="pre">is_removed</span></tt> set to <tt class="xref docutils literal"><span class="pre">False</span></tt>. To test which
+comments will be exported, you can pass the <tt class="docutils literal"><span class="pre">--dry-run</span></tt> option.</p>
+<div class="section" id="id2">
+<h3>Options<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">-d</span></tt>/<tt class="docutils literal"><span class="pre">--dry-run</span></tt>: Does not export any comments, but merely outputs
+the comments which would have been exported. Example:
+<tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">disqus_export</span> <span class="pre">--dry-run</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">--verbosity</span></tt>: Specify the amount of information that should be printed
+to the console. A verbosity of <tt class="docutils literal"><span class="pre">0</span></tt> will output nothing. The default
+verbosity is <tt class="docutils literal"><span class="pre">1</span></tt> and print the title of the comments that are exported.
+Example: <tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">disqus_export</span> <span class="pre">--verbosity=0</span></tt></li>
+</ul>
+</blockquote>
+</div>
 </div>
 <div class="section" id="disqus-threadedcomments-export">
 <h2>disqus_threadedcomments_export<a class="headerlink" href="#disqus-threadedcomments-export" title="Permalink to this headline">¶</a></h2>
@@ -129,7 +159,10 @@ Types can be combined by separating them with a comma. Example:
 <li><a class="reference external" href="#options">Options</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#disqus-export">disqus_export</a></li>
+<li><a class="reference external" href="#disqus-export">disqus_export</a><ul>
+<li><a class="reference external" href="#id2">Options</a></li>
+</ul>
+</li>
 <li><a class="reference external" href="#disqus-threadedcomments-export">disqus_threadedcomments_export</a></li>
 </ul>
 </li>

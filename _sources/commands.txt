@@ -67,6 +67,34 @@ Options
 disqus_export
 -------------
 
+Export comments from contrib.comments to DISQUS.
+
+Before you run this command, make sure that ``django.contrib.comments``
+and ``django.contrib.sites`` are listed in your project's ``INSTALLED_APPS``.
+You also need to change the domain of your Site from ``example.org`` to your
+real domain.
+
+The comment's associated content object must have the following two methods:
+
+ - ``get_absolute_url``: Should return the URL of an object. For example: 
+   ``/2009/10/10/foo``. This should not include the domain name
+ - ``__unicode__``: Unicode representation of the object
+
+The command will export all comments that have the ``is_public``
+attribute set to ``True`` and ``is_removed`` set to ``False``. To test which
+comments will be exported, you can pass the ``--dry-run`` option.
+
+Options
+^^^^^^^
+
+ - ``-d``/``--dry-run``: Does not export any comments, but merely outputs
+   the comments which would have been exported. Example:
+   ``./manage.py disqus_export --dry-run``
+ - ``--verbosity``: Specify the amount of information that should be printed
+   to the console. A verbosity of ``0`` will output nothing. The default
+   verbosity is ``1`` and print the title of the comments that are exported.
+   Example: ``./manage.py disqus_export --verbosity=0``
+
 disqus_threadedcomments_export
 ------------------------------
 
