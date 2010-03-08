@@ -3,7 +3,8 @@ import urllib2
 
 from django.utils import simplejson as json
 
-# do not auto-detect proxy settings
+# A custom ProxyHandler for the urllib2 module that will not
+# auto-detect proxy settings
 proxy_support = urllib2.ProxyHandler({})
 opener = urllib2.build_opener(proxy_support)
 urllib2.install_opener(opener)
@@ -36,10 +37,17 @@ class DisqusClient(object):
         'update_thread': 'POST',
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.api_url = 'http://disqus.com/api/%s?api_version=1.1'
+        self.__dict__.update(kwargs)
 
     def __getattr__(self, attr):
+        """
+        Called when an attribute is not found in the usual places
+        (__dict__, class tree) this method will check if the attribute
+        name is a DISQUS API method and call the `call` method.
+        If it isn't in the METHODS dict, it will raise an AttributeError.
+        """
         if attr in self.METHODS:
             def call_method(**kwargs):
                 return self.call(attr, **kwargs)
@@ -60,6 +68,11 @@ class DisqusClient(object):
         return request
 
     def call(self, method, **params):
+        """
+        Call the DISQUS API and return the json response.
+        URLError is raised when the request failed.
+        DisqusException is raised when the query didn't succeed.
+        """
         url = self.api_url % method
         request = self._get_request(url, self.METHODS[method], **params)
         try:
