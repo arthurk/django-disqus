@@ -8,6 +8,9 @@ Easily integrate [DISQUS](http://disqus.com) comments into your website.
 
 django-disqus is available open-source under the BSD license.
 
+The documentation for the upcoming 0.3 release will be available
+at http://arthurk.github.com/django-disqus/
+
 ## Installation
 
 1. `pip install django-disqus` or clone the repo and run `python setup.py install`
