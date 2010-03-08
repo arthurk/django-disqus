@@ -56,8 +56,8 @@ class DisqusClient(object):
 
     def _get_request(self, url, request_method, **params):
         """
-        Return a urllib2.Request object with either the GET parameters
-        attached to the url or POST data attached to the object.
+        Return a urllib2.Request object that has the GET parameters
+        attached to the url or the POST data attached to the object.
         """
         if request_method == 'GET':
             if params:

@@ -2,8 +2,7 @@ from django.conf import settings
 from django.core.management.base import CommandError
 
 from disqus.api import DisqusClient
-
-from mock import Mock
+from disqus.management.commands import disqus_dumpdata
 
 __test__ = {'API_TESTS': """
 
@@ -19,5 +18,11 @@ and parameters that were passed are set correctly.
 Traceback (most recent call last):
     ...
 AttributeError
+
+
+When a DISQUS API method is called, the call method should be used.
+
+>>> c.get_forum_list
+<function call_method at ...>
 """,
 }
