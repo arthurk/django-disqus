@@ -13,7 +13,8 @@ class DisqusException(Exception):
     pass
 
 class DisqusClient(object):
-    """Client for the DISQUS API.
+    """
+    Client for the DISQUS API.
 
     Example:
         >>> client = DisqusClient()
