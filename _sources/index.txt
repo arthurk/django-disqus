@@ -1,9 +1,6 @@
-.. django-disqus documentation master file, created by
-   sphinx-quickstart on Sat Mar  6 13:42:08 2010.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. _index:
 
-Welcome to django-disqus's documentation!
+Welcome to django-disqus' documentation!
 =========================================
 
 Contents:
@@ -11,10 +8,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+   installation
+   templatetags
+   commands
+   disqusapi
