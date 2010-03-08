@@ -47,14 +47,72 @@
             
   <div class="section" id="commands">
 <span id="id1"></span><h1>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="disqus-dumpdata">
+<h2>disqus_dumpdata<a class="headerlink" href="#disqus-dumpdata" title="Permalink to this headline">¶</a></h2>
+<p>Outputs a list of comments in the JSON format.</p>
+<p>If neither of the <tt class="docutils literal"><span class="pre">--filter</span></tt> or <tt class="docutils literal"><span class="pre">--exclude</span></tt> options are used, the output
+will include approved, deleted and spam comments. Each comment will have the data
+about its associated Author, Thread and Forum included.</p>
+<p>Example output:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[{</span>
+    <span class="s">&quot;status&quot;</span><span class="p">:</span> <span class="s">&quot;approved&quot;</span><span class="p">,</span>
+    <span class="s">&quot;has_been_moderated&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+    <span class="s">&quot;thread&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;category&quot;</span><span class="p">:</span> <span class="s">&quot;78805&quot;</span><span class="p">,</span>
+        <span class="s">&quot;allow_comments&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s">&quot;forum&quot;</span><span class="p">:</span> <span class="s">&quot;71225&quot;</span><span class="p">,</span>
+        <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Passing MEDIA_URL in Django&amp;#39;s 500 error view&quot;</span><span class="p">,</span>
+        <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;http://arthurkoziel.com/2009/01/15/passing-mediaurl-djangos-500-error-view/&quot;</span><span class="p">,</span>
+        <span class="s">&quot;created_at&quot;</span><span class="p">:</span> <span class="s">&quot;2009-01-17T17:29&quot;</span><span class="p">,</span>
+        <span class="s">&quot;slug&quot;</span><span class="p">:</span> <span class="s">&quot;passing_media_url_in_django39s_500_error_view_arthur_koziels_blog&quot;</span><span class="p">,</span>
+        <span class="s">&quot;hidden&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+        <span class="s">&quot;identifier&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;102172011&quot;</span>
+    <span class="p">},</span>
+    <span class="s">&quot;forum&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;71225&quot;</span><span class="p">,</span>
+        <span class="s">&quot;created_at&quot;</span><span class="p">:</span> <span class="s">&quot;2009-01-17 05:48:00.863075&quot;</span><span class="p">,</span>
+        <span class="s">&quot;shortname&quot;</span><span class="p">:</span> <span class="s">&quot;arthurkozielsblog&quot;</span><span class="p">,</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;Arthur Koziel</span><span class="se">\u2019</span><span class="s">s Blog&quot;</span><span class="p">,</span>
+        <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
+    <span class="p">},</span>
+    <span class="s">&quot;created_at&quot;</span><span class="p">:</span> <span class="s">&quot;2009-11-30T12:48&quot;</span><span class="p">,</span>
+    <span class="s">&quot;is_anonymous&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+    <span class="s">&quot;points&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s">&quot;message&quot;</span><span class="p">:</span> <span class="s">&quot;Thanks for the article!&quot;</span><span class="p">,</span>
+    <span class="s">&quot;anonymous_author&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;http://example.org/&quot;</span><span class="p">,</span>
+        <span class="s">&quot;email_hash&quot;</span><span class="p">:</span> <span class="s">&quot;j198m7123m12837m12893m7128121u23&quot;</span><span class="p">,</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">,</span>
+        <span class="s">&quot;email&quot;</span><span class="p">:</span> <span class="s">&quot;john@example.org&quot;</span>
+    <span class="p">},</span>
+    <span class="s">&quot;ip_address&quot;</span><span class="p">:</span> <span class="s">&quot;12.345.678.11&quot;</span><span class="p">,</span>
+    <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;12345678&quot;</span><span class="p">,</span>
+    <span class="s">&quot;parent_post&quot;</span><span class="p">:</span> <span class="n">null</span>
+<span class="p">}]</span>
+</pre></div>
+</div>
+<div class="section" id="options">
+<h3>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">--indent</span></tt>: Specifies the indent level to use when pretty-printing output.
+Example: <tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">dumpdata</span> <span class="pre">--indent=4</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">--filter</span></tt>: Type of entries (new, spam, killed) that should be returned.
+Types can be combined by separating them with a comma. Example:
+<tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">dumpdata</span> <span class="pre">--filter=spam,killed</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">--exclude</span></tt>: Type of entries (new, spam, killed) that should be excluded.
+Types can be combined by separating them with a comma. Example:
+<tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">dumpdata</span> <span class="pre">--exclude=spam,killed</span></tt></li>
+</ul>
+</blockquote>
+</div>
+</div>
 <div class="section" id="disqus-export">
 <h2>disqus_export<a class="headerlink" href="#disqus-export" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="disqus-threadedcomments-export">
 <h2>disqus_threadedcomments_export<a class="headerlink" href="#disqus-threadedcomments-export" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="disqus-dumpdata">
-<h2>disqus_dumpdata<a class="headerlink" href="#disqus-dumpdata" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -67,9 +125,12 @@
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="#">Commands</a><ul>
+<li><a class="reference external" href="#disqus-dumpdata">disqus_dumpdata</a><ul>
+<li><a class="reference external" href="#options">Options</a></li>
+</ul>
+</li>
 <li><a class="reference external" href="#disqus-export">disqus_export</a></li>
 <li><a class="reference external" href="#disqus-threadedcomments-export">disqus_threadedcomments_export</a></li>
-<li><a class="reference external" href="#disqus-dumpdata">disqus_dumpdata</a></li>
 </ul>
 </li>
 </ul>
