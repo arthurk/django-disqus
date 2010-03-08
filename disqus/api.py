@@ -38,7 +38,7 @@ class DisqusClient(object):
     }
 
     def __init__(self, **kwargs):
-        self.api_url = 'http://disqus.com/api/%s?api_version=1.1'
+        self.api_url = 'http://disqus.com/api/%s/?api_version=1.1'
         self.__dict__.update(kwargs)
 
     def __getattr__(self, attr):
@@ -54,17 +54,17 @@ class DisqusClient(object):
             return call_method
         raise AttributeError
 
-    def _get_request(self, url, request_method, **params):
+    def _get_request(self, request_url, request_method, **params):
         """
         Return a urllib2.Request object that has the GET parameters
         attached to the url or the POST data attached to the object.
         """
         if request_method == 'GET':
             if params:
-                url += '&%s' % urlencode(params)
-            request = urllib2.Request(url)
+                request_url += '&%s' % urlencode(params)
+            request = urllib2.Request(request_url)
         elif request_method == 'POST':
-            request = urllib2.Request(url, params)
+            request = urllib2.Request(request_url, urlencode(params))
         return request
 
     def call(self, method, **params):
