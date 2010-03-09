@@ -47,23 +47,73 @@
             
   <div class="section" id="templatetags">
 <span id="id1"></span><h1>Templatetags<a class="headerlink" href="#templatetags" title="Permalink to this headline">¶</a></h1>
+<p>Before you can use the template tags, you need to load them with <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">load</span> <span class="pre">disqus_tags</span> <span class="pre">%}</span></tt>.</p>
 <div class="section" id="disqus-dev">
 <h2>disqus_dev<a class="headerlink" href="#disqus-dev" title="Permalink to this headline">¶</a></h2>
+<p>Return the HTML/js code to enable DISQUS comments on a local
+development server. This template tag will only return a value
+if the <tt class="docutils literal"><span class="pre">settings.DEBUG</span></tt> setting is set to <tt class="xref docutils literal"><span class="pre">True</span></tt>.</p>
+<p>If you don&#8217;t include this, the comment form will not show up on
+a local development server.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>{% load disqus_tags %}
+{% disqus_dev %}</pre>
+</div>
+<p>Result:</p>
+<div class="highlight-python"><pre>&lt;script type="text/javascript"&gt;
+  var disqus_developer = 1;
+  var disqus_url = 'http://arthurkoziel.com/';
+&lt;/script&gt;</pre>
+</div>
 </div>
 <div class="section" id="disqus-show-comments">
 <h2>disqus_show_comments<a class="headerlink" href="#disqus-show-comments" title="Permalink to this headline">¶</a></h2>
+<p>Return the HTML code to display DISQUS comments. This includes
+the comments for the current Thread and the comment form.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>{% load disqus_tags %}
+{% disqus_show_comments %}</pre>
+</div>
+<p>Result:</p>
+<div class="highlight-python"><pre>&lt;div id="disqus_thread"&gt;&lt;/div&gt;
+&lt;script type="text/javascript" src="http://disqus.com/forums/arthurkozielsblog/embed.js"&gt;&lt;/script&gt;
+&lt;noscript&gt;&lt;p&gt;&lt;a href="http://arthurkozielsblog.disqus.com/?url=ref"&gt;View the discussion thread.&lt;/a&gt;&lt;/p&gt;&lt;/noscript&gt;
+&lt;p&gt;&lt;a href="http://disqus.com" class="dsq-brlink"&gt;blog comments powered by &lt;span class="logo-disqus"&gt;Disqus&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;</pre>
+</div>
+<div class="section" id="options">
+<h3>Options:<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">shortname</span></tt>: DISQUS website shortname that should be used. The <tt class="docutils literal"><span class="pre">settings.DISQUS_WEBSITE_SHORTNAME</span></tt> setting takes precedence over this parameter. Example: <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">disqus_show_comments</span> <span class="pre">&quot;foobar&quot;</span> <span class="pre">%}</span></tt></li>
+</ul>
+</blockquote>
+</div>
 </div>
 <div class="section" id="disqus-num-replies">
 <h2>disqus_num_replies<a class="headerlink" href="#disqus-num-replies" title="Permalink to this headline">¶</a></h2>
+<p>Return the HTML/js code that transforms links that end with an
+<tt class="docutils literal"><span class="pre">#disqus_thread</span></tt> anchor into the thread&#8217;s comment count.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>{% load disqus_tags %}
+&lt;a href="{{ object.get_absolute_url }}#disqus_thread"&gt;View Comments&lt;/a&gt;
+{% disqus_num_replies %}</pre>
 </div>
-<div class="section" id="disqus-recent-comments">
-<h2>disqus_recent_comments<a class="headerlink" href="#disqus-recent-comments" title="Permalink to this headline">¶</a></h2>
+<p>Template Tag output:</p>
+<div class="highlight-python"><pre>&lt;script type="text/javascript"&gt;
+...
+&lt;/script&gt;</pre>
 </div>
-<div class="section" id="disqus-top-commenters">
-<h2>disqus_top_commenters<a class="headerlink" href="#disqus-top-commenters" title="Permalink to this headline">¶</a></h2>
+<p>The javascript will then transform the link to:</p>
+<div class="highlight-python"><pre>&lt;a href="foobar/"&gt;2 Comments&lt;/a&gt;</pre>
 </div>
-<div class="section" id="disqus-popular-threads">
-<h2>disqus_popular_threads<a class="headerlink" href="#disqus-popular-threads" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>Options:<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">shortname</span></tt>: DISQUS website shortname that should be used. The <tt class="docutils literal"><span class="pre">settings.DISQUS_WEBSITE_SHORTNAME</span></tt> setting takes precedence over this parameter. Example: <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">disqus_num_replies</span> <span class="pre">&quot;foobar&quot;</span> <span class="pre">%}</span></tt></li>
+</ul>
+</blockquote>
+</div>
 </div>
 </div>
 
@@ -77,11 +127,14 @@
             <ul>
 <li><a class="reference external" href="#">Templatetags</a><ul>
 <li><a class="reference external" href="#disqus-dev">disqus_dev</a></li>
-<li><a class="reference external" href="#disqus-show-comments">disqus_show_comments</a></li>
-<li><a class="reference external" href="#disqus-num-replies">disqus_num_replies</a></li>
-<li><a class="reference external" href="#disqus-recent-comments">disqus_recent_comments</a></li>
-<li><a class="reference external" href="#disqus-top-commenters">disqus_top_commenters</a></li>
-<li><a class="reference external" href="#disqus-popular-threads">disqus_popular_threads</a></li>
+<li><a class="reference external" href="#disqus-show-comments">disqus_show_comments</a><ul>
+<li><a class="reference external" href="#options">Options:</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#disqus-num-replies">disqus_num_replies</a><ul>
+<li><a class="reference external" href="#id2">Options:</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
