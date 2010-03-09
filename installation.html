@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation &mdash; django-disqus v0.3-dev documentation</title>
+    <title>Installation &mdash; django-disqus v0.3 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '0.3-dev',
+        VERSION:     '0.3',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="django-disqus v0.3-dev documentation" href="index.html" />
+    <link rel="top" title="django-disqus v0.3 documentation" href="index.html" />
     <link rel="next" title="Templatetags" href="templatetags.html" />
     <link rel="prev" title="Welcome to django-disqus’ documentation!" href="index.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to django-disqus’ documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">django-disqus v0.3-dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">django-disqus v0.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -47,23 +47,30 @@
             
   <div class="section" id="installation">
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>The easiest way to get django-disqus is if you have <a class="reference external" href="http://peak.telecommunity.com/DevCenter/EasyInstall">setuptools</a> installed:</p>
-<div class="highlight-python"><pre>easy_install django-disqus</pre>
+<p>The easiest way to get django-disqus is if you have <a class="reference external" href="http://pip.openplans.org/">pip</a> installed:</p>
+<div class="highlight-python"><pre>pip install django-disqus</pre>
 </div>
-<p>Without setuptools, it&#8217;s still pretty easy. Download the django-disqus.tgz file from
-<a class="reference external" href="http://pypi.python.org/pypi/django-disqus/">django-disqus&#8217;s Cheeseshop page</a>, untar it and run:</p>
+<p>Without pip, it&#8217;s still pretty easy. Download the django-disqus.tar.gz file
+from <a class="reference external" href="http://pypi.python.org/pypi/django-disqus/">django-disqus&#8217; PyPI page</a>, untar it and run:</p>
 <div class="highlight-python"><pre>python setup.py install</pre>
-</div>
-<div class="section" id="help-and-development">
-<h2>Help and development<a class="headerlink" href="#help-and-development" title="Permalink to this headline">¶</a></h2>
-<p>If you&#8217;d like to help out, you can fork the project
-at <a class="reference external" href="http://github.com/arthurk/django-disqus">http://github.com/arthurk/django-disqus</a> and report any bugs
-at <a class="reference external" href="http://github.com/arthurk/django-disqus/issues">http://github.com/arthurk/django-disqus/issues</a>.</p>
 </div>
 <div class="section" id="configuring-your-django-installation">
 <h2>Configuring your Django installation<a class="headerlink" href="#configuring-your-django-installation" title="Permalink to this headline">¶</a></h2>
-<p>Put &#8216;disqus&#8217; in INSTALLED_APPS.
-Add SHORTNAME...</p>
+<p>First, add <tt class="docutils literal"><span class="pre">disqus</span></tt> to your <tt class="docutils literal"><span class="pre">INSTALLED_APPS</span></tt>. You <strong>don&#8217;t</strong> need to run
+<tt class="docutils literal"><span class="pre">syncdb</span></tt> as there are no models provided.</p>
+<p>Next, add <tt class="docutils literal"><span class="pre">DISQUS_API_KEY</span></tt> and <tt class="docutils literal"><span class="pre">DISQUS_WEBSITE_SHORTNAME</span></tt> to your settings.
+You can <a class="reference external" href="http://disqus.com/api/get_my_key/">get your API key here</a> (you must be logged in on the <a class="reference external" href="http://disqus.com">DISQUS</a>
+website). To see the shortname of your website, navigate to Settings-&gt;General
+on the <a class="reference external" href="http://disqus.com">DISQUS</a> website.</p>
+<p>Example settings.py:</p>
+<div class="highlight-python"><pre>INSTALLED_APPS = (
+     ...
+     'disqus',
+ )
+
+ DISQUS_API_KEY = 'FOOBARFOOBARFOOBARFOOBARFOOBARF'
+ DISQUS_WEBSITE_SHORTNAME = 'foobar'</pre>
+</div>
 </div>
 </div>
 
@@ -76,7 +83,6 @@ Add SHORTNAME...</p>
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="#">Installation</a><ul>
-<li><a class="reference external" href="#help-and-development">Help and development</a></li>
 <li><a class="reference external" href="#configuring-your-django-installation">Configuring your Django installation</a></li>
 </ul>
 </li>
@@ -122,7 +128,7 @@ Add SHORTNAME...</p>
         <li class="right" >
           <a href="index.html" title="Welcome to django-disqus’ documentation!"
              >previous</a> |</li>
-        <li><a href="index.html">django-disqus v0.3-dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">django-disqus v0.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

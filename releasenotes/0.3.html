@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>django-disqus 0.3 &mdash; django-disqus v0.3 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="django-disqus v0.3 documentation" href="../index.html" />
+    <link rel="up" title="Release Notes" href="index.html" />
+    <link rel="prev" title="Release Notes" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Release Notes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">django-disqus v0.3 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Release Notes</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="django-disqus-0-3">
+<h1>django-disqus 0.3<a class="headerlink" href="#django-disqus-0-3" title="Permalink to this headline">¶</a></h1>
+<p><strong>Release Date</strong>: 09-MAR-2010</p>
+<p>This release updates django-disqus to use the new DISQUS v1.1 API and
+cleans up the templatetags and management commands.</p>
+<div class="section" id="management-commands">
+<h2>Management Commands<a class="headerlink" href="#management-commands" title="Permalink to this headline">¶</a></h2>
+<p>The following management commands were renamed:</p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">disqus-dumpdata</span></tt> to <tt class="docutils literal"><span class="pre">disqus_dumpdata</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">disqus-export</span></tt> to <tt class="docutils literal"><span class="pre">disqus_export</span></tt></li>
+</ul>
+</blockquote>
+<p>The old names weren&#8217;t valid Python module identifiers. This lead to
+problems when trying to import them.</p>
+<p>The <tt class="docutils literal"><span class="pre">disqus_dumpdata</span></tt> command has two new options:</p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">filter</span></tt>: Type of entries (e.g. spam or killed) that should be returned</li>
+<li><tt class="docutils literal"><span class="pre">exclude</span></tt>: Type of entries that should be excluded from the response</li>
+</ul>
+</blockquote>
+<p>For further information take a look at the documentation for the
+<a class="reference external" href="../commands.html#disqus-dumpdata"><em>disqus_dumpdata</em></a> command.</p>
+<p>The <tt class="docutils literal"><span class="pre">disqus-export-threadedcomments</span></tt> command was removed from django-disqus
+because the upcoming <tt class="docutils literal"><span class="pre">django-threadedcomments</span></tt> release will rely on the
+comment extension hooks provided in Django 1.1. This means that the
+<tt class="docutils literal"><span class="pre">disqus_export</span></tt> command will work just fine when exporting threadedcomments.</p>
+</div>
+<div class="section" id="templatetags">
+<h2>Templatetags<a class="headerlink" href="#templatetags" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">disqus_recent_comments</span></tt> templatetag was removed. If you want to use
+this or any other widget, go to the <em>Tools</em> section on the <a class="reference external" href="http://disqus.com">DISQUS</a> website.
+There you can configure the widget and get the Javascript code that is
+necessary to display it on your website.</p>
+<p>The parameters of the <tt class="docutils literal"><span class="pre">disqus_show_comments</span></tt> tag have changed. Previously
+you could pass the title, url, snippet and shortname. As of this release,
+it&#8217;s only possible to pass the shortname. If you want to change the
+Javascript variables that the DISQUS comment form uses, take a look at the
+<a class="reference external" href="http://help.disqus.com/entries/100880-configure-and-override-comment-system-behaviors">Configure and override comment system behaviors</a> page in the DISQUS wiki.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">django-disqus 0.3</a><ul>
+<li><a class="reference external" href="#management-commands">Management Commands</a></li>
+<li><a class="reference external" href="#templatetags">Templatetags</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">Release Notes</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/releasenotes/0.3.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Release Notes"
+             >previous</a> |</li>
+        <li><a href="../index.html">django-disqus v0.3 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Release Notes</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Arthur Koziel.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+    </div>
+  </body>
+</html>

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Templatetags &mdash; django-disqus v0.3-dev documentation</title>
+    <title>Templatetags &mdash; django-disqus v0.3 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '0.3-dev',
+        VERSION:     '0.3',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="django-disqus v0.3-dev documentation" href="index.html" />
+    <link rel="top" title="django-disqus v0.3 documentation" href="index.html" />
     <link rel="next" title="Commands" href="commands.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="installation.html" title="Installation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">django-disqus v0.3-dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">django-disqus v0.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -47,14 +47,14 @@
             
   <div class="section" id="templatetags">
 <span id="id1"></span><h1>Templatetags<a class="headerlink" href="#templatetags" title="Permalink to this headline">¶</a></h1>
-<p>Before you can use the template tags, you need to load them with <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">load</span> <span class="pre">disqus_tags</span> <span class="pre">%}</span></tt>.</p>
+<p>Before you can use the template tags, you need to load them with
+<tt class="docutils literal"><span class="pre">{%</span> <span class="pre">load</span> <span class="pre">disqus_tags</span> <span class="pre">%}</span></tt>.</p>
 <div class="section" id="disqus-dev">
 <h2>disqus_dev<a class="headerlink" href="#disqus-dev" title="Permalink to this headline">¶</a></h2>
-<p>Return the HTML/js code to enable DISQUS comments on a local
+<p>Return the HTML/Javascript code to enable DISQUS comments on a local
 development server. This template tag will only return a value
-if the <tt class="docutils literal"><span class="pre">settings.DEBUG</span></tt> setting is set to <tt class="xref docutils literal"><span class="pre">True</span></tt>.</p>
-<p>If you don&#8217;t include this, the comment form will not show up on
-a local development server.</p>
+if the <tt class="docutils literal"><span class="pre">settings.DEBUG</span></tt> setting is set to <tt class="xref docutils literal"><span class="pre">True</span></tt>. If you don&#8217;t
+include this, the comment form will not show up on a local development server.</p>
 <p>Example:</p>
 <div class="highlight-python"><pre>{% load disqus_tags %}
 {% disqus_dev %}</pre>
@@ -80,18 +80,18 @@ the comments for the current Thread and the comment form.</p>
 &lt;noscript&gt;&lt;p&gt;&lt;a href="http://arthurkozielsblog.disqus.com/?url=ref"&gt;View the discussion thread.&lt;/a&gt;&lt;/p&gt;&lt;/noscript&gt;
 &lt;p&gt;&lt;a href="http://disqus.com" class="dsq-brlink"&gt;blog comments powered by &lt;span class="logo-disqus"&gt;Disqus&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;</pre>
 </div>
-<div class="section" id="options">
-<h3>Options:<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
+<p><strong>Options</strong>:</p>
 <blockquote>
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">shortname</span></tt>: DISQUS website shortname that should be used. The <tt class="docutils literal"><span class="pre">settings.DISQUS_WEBSITE_SHORTNAME</span></tt> setting takes precedence over this parameter. Example: <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">disqus_show_comments</span> <span class="pre">&quot;foobar&quot;</span> <span class="pre">%}</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">shortname</span></tt>: DISQUS website shortname that should be used. The
+<tt class="docutils literal"><span class="pre">settings.DISQUS_WEBSITE_SHORTNAME</span></tt> setting takes precedence
+over this parameter. Example: <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">disqus_show_comments</span> <span class="pre">&quot;foobar&quot;</span> <span class="pre">%}</span></tt></li>
 </ul>
 </blockquote>
 </div>
-</div>
 <div class="section" id="disqus-num-replies">
 <h2>disqus_num_replies<a class="headerlink" href="#disqus-num-replies" title="Permalink to this headline">¶</a></h2>
-<p>Return the HTML/js code that transforms links that end with an
+<p>Return the HTML/Javascript code that transforms links which end with an
 <tt class="docutils literal"><span class="pre">#disqus_thread</span></tt> anchor into the thread&#8217;s comment count.</p>
 <p>Example:</p>
 <div class="highlight-python"><pre>{% load disqus_tags %}
@@ -106,14 +106,14 @@ the comments for the current Thread and the comment form.</p>
 <p>The javascript will then transform the link to:</p>
 <div class="highlight-python"><pre>&lt;a href="foobar/"&gt;2 Comments&lt;/a&gt;</pre>
 </div>
-<div class="section" id="id2">
-<h3>Options:<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p><strong>Options</strong>:</p>
 <blockquote>
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">shortname</span></tt>: DISQUS website shortname that should be used. The <tt class="docutils literal"><span class="pre">settings.DISQUS_WEBSITE_SHORTNAME</span></tt> setting takes precedence over this parameter. Example: <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">disqus_num_replies</span> <span class="pre">&quot;foobar&quot;</span> <span class="pre">%}</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">shortname</span></tt>: DISQUS website shortname that should be used. The
+<tt class="docutils literal"><span class="pre">settings.DISQUS_WEBSITE_SHORTNAME</span></tt> setting takes precedence over this
+parameter. Example: <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">disqus_num_replies</span> <span class="pre">&quot;foobar&quot;</span> <span class="pre">%}</span></tt></li>
 </ul>
 </blockquote>
-</div>
 </div>
 </div>
 
@@ -127,14 +127,8 @@ the comments for the current Thread and the comment form.</p>
             <ul>
 <li><a class="reference external" href="#">Templatetags</a><ul>
 <li><a class="reference external" href="#disqus-dev">disqus_dev</a></li>
-<li><a class="reference external" href="#disqus-show-comments">disqus_show_comments</a><ul>
-<li><a class="reference external" href="#options">Options:</a></li>
-</ul>
-</li>
-<li><a class="reference external" href="#disqus-num-replies">disqus_num_replies</a><ul>
-<li><a class="reference external" href="#id2">Options:</a></li>
-</ul>
-</li>
+<li><a class="reference external" href="#disqus-show-comments">disqus_show_comments</a></li>
+<li><a class="reference external" href="#disqus-num-replies">disqus_num_replies</a></li>
 </ul>
 </li>
 </ul>
@@ -179,7 +173,7 @@ the comments for the current Thread and the comment form.</p>
         <li class="right" >
           <a href="installation.html" title="Installation"
              >previous</a> |</li>
-        <li><a href="index.html">django-disqus v0.3-dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">django-disqus v0.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

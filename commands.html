@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Commands &mdash; django-disqus v0.3-dev documentation</title>
+    <title>Commands &mdash; django-disqus v0.3 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '0.3-dev',
+        VERSION:     '0.3',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,8 +19,8 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="django-disqus v0.3-dev documentation" href="index.html" />
-    <link rel="next" title="Disqus API" href="disqusapi.html" />
+    <link rel="top" title="django-disqus v0.3 documentation" href="index.html" />
+    <link rel="next" title="Release Notes" href="releasenotes/index.html" />
     <link rel="prev" title="Templatetags" href="templatetags.html" /> 
   </head>
   <body>
@@ -31,12 +31,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="disqusapi.html" title="Disqus API"
+          <a href="releasenotes/index.html" title="Release Notes"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="templatetags.html" title="Templatetags"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">django-disqus v0.3-dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">django-disqus v0.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -47,8 +47,9 @@
             
   <div class="section" id="commands">
 <span id="id1"></span><h1>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h1>
+<p>django-disqus provides the following management commands.</p>
 <div class="section" id="disqus-dumpdata">
-<h2>disqus_dumpdata<a class="headerlink" href="#disqus-dumpdata" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2>disqus_dumpdata<a class="headerlink" href="#disqus-dumpdata" title="Permalink to this headline">¶</a></h2>
 <p>Outputs a list of comments in the JSON format.</p>
 <p>If neither of the <tt class="docutils literal"><span class="pre">--filter</span></tt> or <tt class="docutils literal"><span class="pre">--exclude</span></tt> options are used, the output
 will include approved, deleted and spam comments. Each comment will have the data
@@ -92,21 +93,19 @@ about its associated Author, Thread and Forum included.</p>
 <span class="p">}]</span>
 </pre></div>
 </div>
-<div class="section" id="options">
-<h3>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
+<p><strong>Options</strong>:</p>
 <blockquote>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">--indent</span></tt>: Specifies the indent level to use when pretty-printing output.
 Example: <tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">dumpdata</span> <span class="pre">--indent=4</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">--filter</span></tt>: Type of entries (new, spam, killed) that should be returned.
-Types can be combined by separating them with a comma. Example:
+<li><tt class="docutils literal"><span class="pre">--filter</span></tt>: Type of entries (approved, spam, killed) that should be
+returned. Types can be combined by separating them with a comma. Example:
 <tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">dumpdata</span> <span class="pre">--filter=spam,killed</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">--exclude</span></tt>: Type of entries (new, spam, killed) that should be excluded.
-Types can be combined by separating them with a comma. Example:
+<li><tt class="docutils literal"><span class="pre">--exclude</span></tt>: Type of entries (approved, spam, killed) that should be
+excluded. Types can be combined by separating them with a comma. Example:
 <tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">dumpdata</span> <span class="pre">--exclude=spam,killed</span></tt></li>
 </ul>
 </blockquote>
-</div>
 </div>
 <div class="section" id="disqus-export">
 <h2>disqus_export<a class="headerlink" href="#disqus-export" title="Permalink to this headline">¶</a></h2>
@@ -126,23 +125,18 @@ real domain.</p>
 <p>The command will export all comments that have the <tt class="docutils literal"><span class="pre">is_public</span></tt>
 attribute set to <tt class="xref docutils literal"><span class="pre">True</span></tt> and <tt class="docutils literal"><span class="pre">is_removed</span></tt> set to <tt class="xref docutils literal"><span class="pre">False</span></tt>. To test which
 comments will be exported, you can pass the <tt class="docutils literal"><span class="pre">--dry-run</span></tt> option.</p>
-<div class="section" id="id2">
-<h3>Options<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p><strong>Options</strong>:</p>
 <blockquote>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">-d</span></tt>/<tt class="docutils literal"><span class="pre">--dry-run</span></tt>: Does not export any comments, but merely outputs
 the comments which would have been exported. Example:
 <tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">disqus_export</span> <span class="pre">--dry-run</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">--verbosity</span></tt>: Specify the amount of information that should be printed
-to the console. A verbosity of <tt class="docutils literal"><span class="pre">0</span></tt> will output nothing. The default
-verbosity is <tt class="docutils literal"><span class="pre">1</span></tt> and print the title of the comments that are exported.
-Example: <tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">disqus_export</span> <span class="pre">--verbosity=0</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">-v</span></tt>/<tt class="docutils literal"><span class="pre">--verbosity</span></tt>: Specify the amount of information that should be
+printed to the console. A verbosity of <tt class="docutils literal"><span class="pre">0</span></tt> will output nothing. The
+default verbosity is <tt class="docutils literal"><span class="pre">1</span></tt> and print the title of the comments that are
+exported. Example: <tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">disqus_export</span> <span class="pre">--verbosity=0</span></tt></li>
 </ul>
 </blockquote>
-</div>
-</div>
-<div class="section" id="disqus-threadedcomments-export">
-<h2>disqus_threadedcomments_export<a class="headerlink" href="#disqus-threadedcomments-export" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -155,15 +149,8 @@ Example: <tt class="docutils literal"><span class="pre">./manage.py</span> <span
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="#">Commands</a><ul>
-<li><a class="reference external" href="#disqus-dumpdata">disqus_dumpdata</a><ul>
-<li><a class="reference external" href="#options">Options</a></li>
-</ul>
-</li>
-<li><a class="reference external" href="#disqus-export">disqus_export</a><ul>
-<li><a class="reference external" href="#id2">Options</a></li>
-</ul>
-</li>
-<li><a class="reference external" href="#disqus-threadedcomments-export">disqus_threadedcomments_export</a></li>
+<li><a class="reference external" href="#disqus-dumpdata">disqus_dumpdata</a></li>
+<li><a class="reference external" href="#disqus-export">disqus_export</a></li>
 </ul>
 </li>
 </ul>
@@ -172,8 +159,8 @@ Example: <tt class="docutils literal"><span class="pre">./manage.py</span> <span
             <p class="topless"><a href="templatetags.html"
                                   title="previous chapter">Templatetags</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="disqusapi.html"
-                                  title="next chapter">Disqus API</a></p>
+            <p class="topless"><a href="releasenotes/index.html"
+                                  title="next chapter">Release Notes</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/commands.txt"
@@ -203,12 +190,12 @@ Example: <tt class="docutils literal"><span class="pre">./manage.py</span> <span
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="disqusapi.html" title="Disqus API"
+          <a href="releasenotes/index.html" title="Release Notes"
              >next</a> |</li>
         <li class="right" >
           <a href="templatetags.html" title="Templatetags"
              >previous</a> |</li>
-        <li><a href="index.html">django-disqus v0.3-dev documentation</a> &raquo;</li> 
+        <li><a href="index.html">django-disqus v0.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
