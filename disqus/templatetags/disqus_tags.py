@@ -1,13 +1,13 @@
 from django import template
-from django.template.defaultfilters import escapejs
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.template.defaultfilters import escapejs
 
 register = template.Library()
 
 def disqus_dev():
     """
-    Returns the HTML/js code to enable DISQUS comments on a local 
+    Return the HTML/js code to enable DISQUS comments on a local
     development server if the settings.DEBUG is set to True.
     """
     if settings.DEBUG:
@@ -21,11 +21,10 @@ def disqus_dev():
 
 def disqus_num_replies(shortname=''):
     """
-    Returns the HTML/js code necessary to display the number of comments
-    for a DISQUS thread.
+    Return the HTML/js code that transforms links that end with an
+    #disqus_thread anchor into the thread's comment count.
     """
-    if not shortname:
-        shortname = settings.DISQUS_WEBSITE_SHORTNAME
+    shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
     return """
     <script type="text/javascript">
     //<![CDATA[
@@ -43,72 +42,18 @@ def disqus_num_replies(shortname=''):
     </script>
     """ % shortname
 
-def disqus_show_comments(title=None, url=None, snippet=None, shortname=''):
+def disqus_show_comments(shortname=''):
     """
-    Returns the HTML code necessary to display DISQUS comments.
+    Return the HTML code to display DISQUS comments.
     """
-    if not shortname:
-        shortname = settings.DISQUS_WEBSITE_SHORTNAME
-    if title or url or snippet:
-        s = '<script type="text/javascript">'
-        if title:
-            s += 'var disqus_title = "%s";' % escapejs(title)
-        if url:
-            s += 'var disqus_url = "http://%s%s";' % \
-                (Site.objects.get_current().domain, escapejs(url))
-        if snippet:
-            s += 'var disqus_message = "%s";' % escapejs(snippet)
-        s += '</script>'
-    else:
-        s = ''
-    return s + """
+    shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
+    return """
     <div id="disqus_thread"></div>
     <script type="text/javascript" src="http://disqus.com/forums/%(shortname)s/embed.js"></script>
     <noscript><p><a href="http://%(shortname)s.disqus.com/?url=ref">View the discussion thread.</a></p></noscript>
     <p><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a></p>
     """ % dict(shortname=shortname)
 
-def disqus_recent_comments(num_items=3, avatar_size=32, shortname=''):
-    """
-    Returns the HTML/js code necessary to display the recent comments widget.
-    """
-    if not shortname:
-        shortname = settings.DISQUS_WEBSITE_SHORTNAME
-    return """
-    <script type="text/javascript" src="http://disqus.com/forums/%(shortname)s/recent_comments_widget.js?num_items=%(num_items)d&amp;avatar_size=%(avatar_size)d"></script>
-    <noscript><p><a href="http://%(shortname)s.disqus.com/?url=ref">View the discussion thread.</a></p></noscript>
-    """ % dict(shortname=shortname,
-               num_items=num_items,
-               avatar_size=avatar_size)
-
-def disqus_top_commenters(num_items=5, hide_mod=0, hide_avatars=0, avatar_size=32, shortname=''):
-    """
-    Returns the HTML/js code necessary to display top commenters
-    """
-    if not shortname:
-        shortname = settings.DISQUS_WEBSITE_SHORTNAME
-    return """
-    <script type="text/javascript" src="http://disqus.com/forums/%(shortname)s/top_commenters_widget.js?num_items=%(num_items)d&hide_mods=%(hide_mod)d&hide_avatars=%(hide_avatars)d&avatar_size=%(avatar_size)d"></script>
-    """ % dict(shortname=shortname,
-               num_items=num_items,
-               hide_mod=hide_mod,
-               hide_avatars=hide_avatars,
-               avatar_size=avatar_size)
-
-def disqus_popular_threads(num_items=5, shortname=''):
-    """
-    Returns the HTML/js code necessary to display top commenters
-    """
-    if not shortname:
-        shortname = settings.DISQUS_WEBSITE_SHORTNAME
-    return """
-    <script type="text/javascript" src="http://disqus.com/forums/%(shortname)s/popular_threads_widget.js?num_items=%(num_items)d"></script>
-    """ % dict(shortname=shortname,
-               num_items=num_items)
-
 register.simple_tag(disqus_dev)
 register.simple_tag(disqus_num_replies)
 register.simple_tag(disqus_show_comments)
-register.simple_tag(disqus_recent_comments)
-register.simple_tag(disqus_top_commenters)
-register.simple_tag(disqus_popular_threads)

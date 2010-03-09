@@ -2,7 +2,6 @@ from django.conf import settings
 from django.core.management.base import CommandError
 
 from disqus.api import DisqusClient
-from disqus.management.commands import disqus_dumpdata
 
 __test__ = {'API_TESTS': """
 
@@ -26,3 +25,4 @@ When a DISQUS API method is called, the call method should be used.
 <function call_method at ...>
 """,
 }
+
