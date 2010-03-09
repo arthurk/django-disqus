@@ -3,17 +3,16 @@
 Templatetags
 ============
 
-Before you can use the template tags, you need to load them with ``{% load disqus_tags %}``.
+Before you can use the template tags, you need to load them with
+``{% load disqus_tags %}``.
 
 disqus_dev
 ----------
 
-Return the HTML/js code to enable DISQUS comments on a local
+Return the HTML/Javascript code to enable DISQUS comments on a local
 development server. This template tag will only return a value
-if the ``settings.DEBUG`` setting is set to ``True``.
-
-If you don't include this, the comment form will not show up on
-a local development server.
+if the ``settings.DEBUG`` setting is set to ``True``. If you don't
+include this, the comment form will not show up on a local development server.
 
 Example::
 
@@ -45,15 +44,16 @@ Result::
     <noscript><p><a href="http://arthurkozielsblog.disqus.com/?url=ref">View the discussion thread.</a></p></noscript>
     <p><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a></p>
 
-Options:
-^^^^^^^^
+**Options**:
 
- - ``shortname``: DISQUS website shortname that should be used. The ``settings.DISQUS_WEBSITE_SHORTNAME`` setting takes precedence over this parameter. Example: ``{% disqus_show_comments "foobar" %}``
+ - ``shortname``: DISQUS website shortname that should be used. The
+   ``settings.DISQUS_WEBSITE_SHORTNAME`` setting takes precedence
+   over this parameter. Example: ``{% disqus_show_comments "foobar" %}``
 
 disqus_num_replies
 ------------------
 
-Return the HTML/js code that transforms links that end with an
+Return the HTML/Javascript code that transforms links which end with an
 ``#disqus_thread`` anchor into the thread's comment count.
 
 Example::
@@ -72,7 +72,8 @@ The javascript will then transform the link to::
 
     <a href="foobar/">2 Comments</a>
 
-Options:
-^^^^^^^^
+**Options**:
 
- - ``shortname``: DISQUS website shortname that should be used. The ``settings.DISQUS_WEBSITE_SHORTNAME`` setting takes precedence over this parameter. Example: ``{% disqus_num_replies "foobar" %}``
+ - ``shortname``: DISQUS website shortname that should be used. The 
+   ``settings.DISQUS_WEBSITE_SHORTNAME`` setting takes precedence over this
+   parameter. Example: ``{% disqus_num_replies "foobar" %}``

@@ -1,0 +1,48 @@
+django-disqus 0.3
+=================
+
+**Release Date**: 09-MAR-2010
+
+This release updates django-disqus to use the new DISQUS v1.1 API and
+cleans up the templatetags and management commands.
+
+Management Commands
+-------------------
+
+The following management commands were renamed: 
+
+ - ``disqus-dumpdata`` to ``disqus_dumpdata``
+ - ``disqus-export`` to ``disqus_export``
+
+The old names weren't valid Python module identifiers. This lead to
+problems when trying to import them.
+
+The ``disqus_dumpdata`` command has two new options:
+
+ - ``filter``: Type of entries (e.g. spam or killed) that should be returned
+ - ``exclude``: Type of entries that should be excluded from the response 
+
+For further information take a look at the documentation for the 
+:ref:`disqus_dumpdata` command.
+
+The ``disqus-export-threadedcomments`` command was removed from django-disqus
+because the upcoming ``django-threadedcomments`` release will rely on the
+comment extension hooks provided in Django 1.1. This means that the 
+``disqus_export`` command will work just fine when exporting threadedcomments.
+
+Templatetags
+------------
+
+The ``disqus_recent_comments`` templatetag was removed. If you want to use
+this or any other widget, go to the *Tools* section on the DISQUS_ website.
+There you can configure the widget and get the Javascript code that is 
+necessary to display it on your website.
+
+The parameters of the ``disqus_show_comments`` tag have changed. Previously
+you could pass the title, url, snippet and shortname. As of this release,
+it's only possible to pass the shortname. If you want to change the
+Javascript variables that the DISQUS comment form uses, take a look at the
+`Configure and override comment system behaviors`_ page in the DISQUS wiki.
+
+.. _`Configure and override comment system behaviors`: http://help.disqus.com/entries/100880-configure-and-override-comment-system-behaviors
+.. _DISQUS: http://disqus.com

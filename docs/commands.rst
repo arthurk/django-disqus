@@ -3,6 +3,10 @@
 Commands
 ========
 
+django-disqus provides the following management commands.
+
+.. _disqus_dumpdata:
+
 disqus_dumpdata
 ---------------
 
@@ -52,16 +56,15 @@ Example output::
     }]
 
 
-Options
-^^^^^^^
+**Options**:
 
  - ``--indent``: Specifies the indent level to use when pretty-printing output.
    Example: ``./manage.py dumpdata --indent=4``
- - ``--filter``: Type of entries (new, spam, killed) that should be returned.
-   Types can be combined by separating them with a comma. Example: 
+ - ``--filter``: Type of entries (approved, spam, killed) that should be
+   returned. Types can be combined by separating them with a comma. Example:
    ``./manage.py dumpdata --filter=spam,killed``
- - ``--exclude``: Type of entries (new, spam, killed) that should be excluded.
-   Types can be combined by separating them with a comma. Example: 
+ - ``--exclude``: Type of entries (approved, spam, killed) that should be
+   excluded. Types can be combined by separating them with a comma. Example:
    ``./manage.py dumpdata --exclude=spam,killed``
 
 disqus_export
@@ -84,17 +87,13 @@ The command will export all comments that have the ``is_public``
 attribute set to ``True`` and ``is_removed`` set to ``False``. To test which
 comments will be exported, you can pass the ``--dry-run`` option.
 
-Options
-^^^^^^^
+**Options**:
 
  - ``-d``/``--dry-run``: Does not export any comments, but merely outputs
    the comments which would have been exported. Example:
    ``./manage.py disqus_export --dry-run``
- - ``--verbosity``: Specify the amount of information that should be printed
-   to the console. A verbosity of ``0`` will output nothing. The default
-   verbosity is ``1`` and print the title of the comments that are exported.
-   Example: ``./manage.py disqus_export --verbosity=0``
-
-disqus_threadedcomments_export
-------------------------------
+ - ``-v``/``--verbosity``: Specify the amount of information that should be
+   printed to the console. A verbosity of ``0`` will output nothing. The
+   default verbosity is ``1`` and print the title of the comments that are
+   exported. Example: ``./manage.py disqus_export --verbosity=0``
 
