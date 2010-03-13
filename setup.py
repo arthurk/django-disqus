@@ -5,10 +5,10 @@ from setuptools import setup, find_packages
 setup(
     name='django-disqus',
     version='0.3',
-    description='Integrate DISQUS comments into your Django website',
+    description='Export existing comments to and integrate DISQUS into your Django website',
     author='Arthur Koziel',
     author_email='arthur@arthurkoziel.com',
-    url='http://github.com/arthurk/django-disqus',
+    url='http://arthurk.github.com/django-disqus/',
     license='New BSD License',
     classifiers=[
       'Framework :: Django',
