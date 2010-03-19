@@ -49,7 +49,7 @@ def disqus_show_comments(shortname=''):
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
     return """
     <div id="disqus_thread"></div>
-    <script type="text/javascript" src="http://disqus.com/forums/%(shortname)s/embed.js"></script>
+    <script type="text/javascript" async src="http://disqus.com/forums/%(shortname)s/embed.js"></script>
     <noscript><p><a href="http://%(shortname)s.disqus.com/?url=ref">View the discussion thread.</a></p></noscript>
     <p><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a></p>
     """ % dict(shortname=shortname)
