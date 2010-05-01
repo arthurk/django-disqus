@@ -1,0 +1,12 @@
+django-disqus 0.3.1
+===================
+
+**Release Date**: 01-MAY-2010
+
+This is a bugfix release. The following changes were made:
+
+ - Fixed a bug where the disqus_export command raised an error if non-ascii
+   characters were used in the author name.
+ - Added "async" attribute to DISQUS JavaScript tag. This loads the comments
+   faster on browsers that support the html5 async tag (e.g. firefox).
+
