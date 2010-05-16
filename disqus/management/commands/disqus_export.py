@@ -1,4 +1,5 @@
 from optparse import make_option
+import os.path
 
 from django.conf import settings
 from django.contrib import comments
@@ -14,22 +15,53 @@ class Command(NoArgsCommand):
         make_option('-d', '--dry-run', action="store_true", dest="dry_run",
                     help='Does not export any comments, but merely outputs' +
                          'the comments which would have been exported.'),
+        make_option('-s', '--state-file', action="store", dest="state_file",
+                    help="Saves the state of the export in the given file " +
+                         "and auto-resumes from this file if possible."),
     )
     help = 'Export comments from contrib.comments to DISQUS'
     requires_model_validation = False
 
-    def _get_comments_to_export(self):
+    def _get_comments_to_export(self, last_export_id=None):
         """Return comments which should be exported."""
-        return comments.get_model().objects.order_by('id').filter(is_public=True,
-                                                                  is_removed=False)
+        qs = comments.get_model().objects.order_by('pk')\
+                .filter(is_public=True, is_removed=False)
+        if last_export_id is not None:
+            print "Resuming after comment %s" % str(last_export_id)
+            qs = qs.filter(id__gt=last_export_id)
+        return qs
+
+    def _get_last_state(self, state_file):
+        """Checks the given path for the last exported comment's id"""
+        state = None
+        fp = open(state_file)
+        try:
+            state = int(fp.read())
+            print "Found previous state: %d" % (state,)
+        finally:
+            fp.close()
+        return state
+
+    def _save_state(self, state_file, last_pk):
+        """Saves the last_pk into the given state_file"""
+        fp = open(state_file, 'w+')
+        try:
+            fp.write(str(last_pk))
+        finally:
+            fp.close()
 
     def handle(self, **options):
         current_site = Site.objects.get_current()
         client = DisqusClient()
         verbosity = int(options.get('verbosity'))
         dry_run = bool(options.get('dry_run'))
+        state_file = options.get('state_file')
+        last_exported_id = None
 
-        comments = self._get_comments_to_export()
+        if state_file is not None and os.path.exists(state_file):
+            last_exported_id = self._get_last_state(state_file)
+
+        comments = self._get_comments_to_export(last_exported_id)
         comments_count = comments.count()
         if verbosity >= 1:
             print "Exporting %d comment(s)" % comments_count
@@ -97,3 +129,5 @@ class Command(NoArgsCommand):
                                                   'nobody@example.org'),
                 author_url=comment.userinfo.get('url', ''),
                 created_at=comment.submit_date.strftime('%Y-%m-%dT%H:%M'))
+            if state_file is not None:
+                self._save_state(state_file, comment.pk)
