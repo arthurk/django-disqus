@@ -96,4 +96,7 @@ comments will be exported, you can pass the ``--dry-run`` option.
    printed to the console. A verbosity of ``0`` will output nothing. The
    default verbosity is ``1`` and print the title of the comments that are
    exported. Example: ``./manage.py disqus_export --verbosity=0``
+ - ``-s``/``--state-file``: Specify the file where the export command
+   should save its state into. This makes it possible to also resume
+   interrupted exports.
 
