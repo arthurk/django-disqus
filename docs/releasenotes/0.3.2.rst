@@ -1,0 +1,9 @@
+django-disqus 0.3.2
+===================
+
+**Release Date**: 16-MAY-2010
+
+- Added a `-s/--state-file` option to the :doc:`disqus_export </commands>`
+  command. The state file saves the id of the last exported comment.
+  This makes it possible to resume interrupted exports.
+  Thanks `Horst Gutmann <http://zerokspot.com/>`_ for the patch.
