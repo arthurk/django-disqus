@@ -1,0 +1,7 @@
+django-disqus 0.3.3
+===================
+
+**Release Date**: 23-SEP-2010
+
+- Update the `disqus_show_comments` template tag to use the new loader method.
+  Thanks David Cramer for the patch.

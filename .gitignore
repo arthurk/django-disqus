@@ -4,3 +4,4 @@ ve
 testproject
 *.egg-info
 dist/
+build/
