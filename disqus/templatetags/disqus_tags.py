@@ -49,8 +49,19 @@ def disqus_show_comments(shortname=''):
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
     return """
     <div id="disqus_thread"></div>
-    <script type="text/javascript" async src="http://disqus.com/forums/%(shortname)s/embed.js"></script>
-    <noscript><p><a href="http://%(shortname)s.disqus.com/?url=ref">View the discussion thread.</a></p></noscript>
+    <script type="text/javascript">
+    /* <![CDATA[ */
+    var disqus_shortname = '%(shortname)s';
+    var disqus_domain = 'disqus.com';
+    (function() {
+    	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    	dsq.async = true;
+    	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js';
+    	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    /* ]]> */
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript=">comments powered by Disqus.</a></noscript>
     <p><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a></p>
     """ % dict(shortname=shortname)
 
