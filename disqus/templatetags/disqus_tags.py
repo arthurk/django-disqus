@@ -1,14 +1,13 @@
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.template.defaultfilters import escapejs
 
 register = template.Library()
 
 def disqus_dev():
     """
     Return the HTML/js code to enable DISQUS comments on a local
-    development server if the settings.DEBUG is set to True.
+    development server if settings.DEBUG is True.
     """
     if settings.DEBUG:
         return """
@@ -21,26 +20,18 @@ def disqus_dev():
 
 def disqus_num_replies(shortname=''):
     """
-    Return the HTML/js code that transforms links that end with an
-    #disqus_thread anchor into the thread's comment count.
+    Return the HTML/js code which transforms links that end with an
+    #disqus_thread anchor into the threads comment count.
     """
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
-    return """
-    <script type="text/javascript">
-    //<![CDATA[
-    (function() {
-        var links = document.getElementsByTagName('a');
-        var query = '?';
-        for(var i = 0; i < links.length; i++) {
-            if(links[i].href.indexOf('#disqus_thread') >= 0) {
-                query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
-            }
-        }
-        document.write('<script type="text/javascript" src="http://disqus.com/forums/%s/get_num_replies.js' + query + '"></' + 'script>');
-    })();
-    //]]>
-    </script>
-    """ % shortname
+    return """<script type="text/javascript">
+var disqus_shortname = '%(shortname)s';
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.src = 'http://disqus.com/forums/%(shortname)s/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>""" % dict(shortname=shortname)
 
 def disqus_show_comments(shortname=''):
     """
