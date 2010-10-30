@@ -31,12 +31,16 @@ def disqus_num_replies(shortname=''):
     (function() {
         var links = document.getElementsByTagName('a');
         var query = '?';
-        for(var i = 0; i < links.length; i++) {
+        var len = links.length;
+        for(var i = 0; i < len; i++) {
             if(links[i].href.indexOf('#disqus_thread') >= 0) {
                 query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
             }
         }
-        document.write('<script type="text/javascript" src="http://disqus.com/forums/%s/get_num_replies.js' + query + '"></' + 'script>');
+        var script = document.createElement("script");
+        script.src = "http://disqus.com/forums/%s/get_num_replies.js" + query;
+        script.type = "text/javascript";
+        (document.getElementsByTagName("head")[0] || document.getElementsByTagName("body")[0]).appendChild(script);
     })();
     //]]>
     </script>
