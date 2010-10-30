@@ -1,0 +1,8 @@
+django-disqus 0.3.4
+===================
+
+**Release Date**: 30-OCT-2010
+
+- Update the `disqus_num_replies` template tag to use the new JS code.
+  This will make the site load faster, as loading isn't blocked by the call to document.write.
+  Thanks to Nick Fitzgerald.
