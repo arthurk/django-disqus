@@ -64,7 +64,7 @@ class DisqusClient(object):
                 request_url += '&%s' % urlencode(params)
             request = urllib2.Request(request_url)
         elif request_method == 'POST':
-            request = urllib2.Request(request_url, urlencode(params))
+            request = urllib2.Request(request_url, urlencode(params,doseq=1))
         return request
 
     def call(self, method, **params):
