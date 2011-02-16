@@ -8,14 +8,24 @@ register = template.Library()
 class ContextSetterNode(template.Node):
     def __init__(self, var_name, var_value):
         self.var_name = var_name
-        self.var_value = template.Variable(var_value)
+        self.var_value = var_value
     
-    def render(self, context):
+    def _get_value(self, value, context):
+        """
+        Attempts to resolve the value as a variable. Failing that, it returns
+        its actual value
+        """
         try:
-            var_value = self.var_value.resolve(context)
+            var_value = template.Variable(value).resolve(context)
         except template.VariableDoesNotExist:
             var_value = self.var_value.var
-        
+        return var_value
+    
+    def render(self, context):
+        if isinstance(self.var_value, (list, tuple)):
+            var_value = ''.join([str(self._get_value(x, context)) for x in self.var_value])
+        else:
+            var_value = self._get_value(self.var_value, context)
         context[self.var_name] = var_value
         return ''
 
@@ -26,10 +36,10 @@ def generic_setter_compiler(var_name, name, node_class, parser, token):
     For calls like {% set_this_value "My Value" %}
     """
     bits = token.split_contents()
-    if(len(bits) != 2):
-        message = "%s takes one argument" % name
-        raise TemplateSyntaxError(message)
-    return node_class(var_name, bits[1])
+    if(len(bits) < 2):
+        message = "%s takes at least one argument" % name
+        raise template.TemplateSyntaxError(message)
+    return node_class(var_name, bits[1:])
 
 # Set the disqus_developer variable to 0/1. Default is 0
 set_disqus_developer = curry(generic_setter_compiler, 'disqus_developer', 'set_disqus_developer', ContextSetterNode)

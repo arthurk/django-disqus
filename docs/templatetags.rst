@@ -28,6 +28,13 @@ Example::
 	{% load disqus_tags %}
 	{% set_disqus_identifier object.id %}
 
+You may also pass in multiple arguments, which will then be concatenated::
+
+	{% load disqus_tags %}
+	{% set_disqus_identifier "blogentry_" object.id %}
+
+This results in ``disqus_identifier`` set to ``blogentry_25``\ , if the object's id is 25.
+
 set_disqus_url
 --------------
 
