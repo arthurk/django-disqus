@@ -6,6 +6,50 @@ Templatetags
 Before you can use the template tags, you need to load them with
 ``{% load disqus_tags %}``.
 
+set_disqus_developer
+--------------------
+
+Adds ``disqus_deveoper`` variable to the context for the current block. The context variable is used in the :ref:`disqus_show_comments` and :ref:`disqus_num_replies` templatetags for signaling Disqus you are in testing mode. See 
+`JavaScript configuration vairables documentation <http://docs.disqus.com/help/2/>`_ for more information.
+
+Example::
+
+	{% load disqus_tags %}
+	{% set_disqus_developer 1 %}
+
+set_disqus_identifier
+---------------------
+
+Adds ``disqus_identifier`` variable to the context for the current block. The context variable is used in the :ref:`disqus_show_comments` and :ref:`disqus_num_replies` templatetags to assign a unique value for this page. The value can be a static value or a variable.  See 
+`JavaScript configuration vairables documentation <http://docs.disqus.com/help/2/>`_ for more information.
+
+Example::
+
+	{% load disqus_tags %}
+	{% set_disqus_identifier object.id %}
+
+set_disqus_url
+--------------
+
+Adds ``disqus_url`` variable to the context for the current block. The context variable is used in the :ref:`disqus_show_comments` and :ref:`disqus_num_replies` templatetags to assign a the URL for this page. This is very important if there are several ways to reach this page (mobile and desktop versions, for example). The value can be a static value or a variable.  See 
+`JavaScript configuration vairables documentation <http://docs.disqus.com/help/2/>`_ for more information.
+
+Example::
+
+	{% load disqus_tags %}
+	{% set_disqus_url object.get_absolute_url %}
+
+set_disqus_title
+----------------
+
+Adds ``disqus_title`` variable to the context for the current block. The context variable is used in the :ref:`disqus_show_comments` and :ref:`disqus_num_replies` templatetags to assign a title for this page. If your ``<title>`` tag contains extra cruft, this is useful for setting a easier to read title. The value can be a static value or a variable.  See 
+`JavaScript configuration vairables documentation <http://docs.disqus.com/help/2/>`_ for more information.
+
+Example::
+
+	{% load disqus_tags %}
+	{% set_disqus_title object.headline %}
+
 disqus_dev
 ----------
 
@@ -29,8 +73,8 @@ Result::
 disqus_show_comments
 --------------------
 
-Return the HTML code to display DISQUS comments. This includes
-the comments for the current Thread and the comment form.
+Renders the ``disqus/show_comments.html`` template to display DISQUS comments, including any configuration variables set in this template block. The comments for the current Thread and the comment form are displayed to the user. See the 
+`embed code <http://docs.disqus.com/developers/universal/>`_ for more information.
 
 Example::
 
@@ -53,13 +97,14 @@ Result::
 disqus_num_replies
 ------------------
 
-Return the HTML/Javascript code that transforms links which end with an
-``#disqus_thread`` anchor into the thread's comment count.
+Renders the ``disqus/num_replies.html`` template, including any configuration variables set in this template block. This code that transforms links which end with a ``#disqus_thread`` anchor into the thread's comment count.
+
+Disqus recommends including a ``data-disqus-identifier`` parameter to the ``<a>`` tag for consistent lookup. Make sure you also use :ref:`set_disqus_identifier` on the page it links to, as well.
 
 Example::
 
     {% load disqus_tags %}
-    <a href="{{ object.get_absolute_url }}#disqus_thread">View Comments</a>
+    <a href="{{ object.get_absolute_url }}#disqus_thread" data-disqus-identifier="{{ object.id }}">View Comments</a>
     {% disqus_num_replies %}
 
 Template Tag output::
