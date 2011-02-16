@@ -67,46 +67,32 @@ def disqus_dev():
 </script>""" % Site.objects.get_current().domain
     return ""
 
-def disqus_num_replies(shortname=''):
+def disqus_num_replies(context, shortname=''):
     """
     Return the HTML/js code which transforms links that end with an
     #disqus_thread anchor into the threads comment count.
     """
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
-    return """<script type="text/javascript">
-    var disqus_shortname = '%(shortname)s';
-    (function () {
-        var s = document.createElement('script'); s.async = true;
-        s.src = 'http://disqus.com/forums/%(shortname)s/count.js';
-        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-    }());
-</script>""" % dict(shortname=shortname)
+    
+    return {
+        'shortname': shortname,
+        'config': get_config(context),
+    }
 
-def disqus_show_comments(shortname=''):
+def disqus_show_comments(context, shortname=''):
     """
     Return the HTML code to display DISQUS comments.
     """
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
-    return """<div id="disqus_thread"></div>
-<script type="text/javascript">
+    return {
+        'shortname': shortname,
+        'config': get_config(context),
+    }
+
 register.tag('set_disqus_developer', set_disqus_developer)
 register.tag('set_disqus_identifier', set_disqus_identifier)
 register.tag('set_disqus_url', set_disqus_url)
 register.tag('set_disqus_title', set_disqus_title)
-    /* <![CDATA[ */
-    var disqus_shortname = '%(shortname)s';
-    var disqus_domain = 'disqus.com';
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-    /* ]]> */
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript=">comments powered by Disqus.</a></noscript>
-<p><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a></p>""" % dict(shortname=shortname)
-
 register.simple_tag(disqus_dev)
-register.simple_tag(disqus_num_replies)
-register.simple_tag(disqus_show_comments)
+register.inclusion_tag('disqus/num_replies.html', takes_context=True)(disqus_num_replies)
+register.inclusion_tag('disqus/show_comments.html', takes_context=True)(disqus_show_comments)
