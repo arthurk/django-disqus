@@ -1,7 +1,7 @@
 <script type="text/javascript">
 {% block config_variables %}
 	var disqus_shortname = '{{ shortname }}';
-{{ config }}
+{{ config|safe }}
 {% endblock %}
 	/* * * DON'T EDIT BELOW THIS LINE * * */
 	(function () {

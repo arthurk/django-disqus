@@ -62,7 +62,7 @@ def get_config(context):
     output = []
     for item in conf_vars:
         if item in context:
-            output.append('\tvar %s = %s;' % (item, context[item]))
+            output.append('\tvar %s = "%s";' % (item, context[item]))
     return '\n'.join(output)
 
 def disqus_dev():
