@@ -54,12 +54,11 @@ class WxrFeedType(feedgenerator.Rss201rev2Feed):
         pass
     
     def add_item_elements(self, handler, item):
-        print item
         if item['comments'] is None:
             return
         handler.addQuickElement(u"title", item['title'])
         handler.addQuickElement(u"link", item['link'])
-        handler.addQuickElement(u"content:encoded", item['description'])
+        handler.addQuickElement(u"content:encoded", "<![CDATA[%s]]>" % item['description'])
         handler.addQuickElement(u'dsq:thread_identifier', item['unique_id'])
         handler.addQuickElement(u'wp:post_date_gmt', 
             feedgenerator.rfc3339_date(item['pubdate']).decode('utf-8'))
@@ -72,13 +71,13 @@ class WxrFeedType(feedgenerator.Rss201rev2Feed):
         handler.addQuickElement(u"dsq:avatar", comment['avatar'])
         handler.endElement(u"dsq:remote")
         handler.addQuickElement(u"wp:comment_id", comment['id'])
-        handler.addQuickElement(u"wp:comment_author", comment['user_name'])
+        handler.addQuickElement(u"wp:comment_author", "<![CDATA[%s]]>" % comment['user_name'])
         handler.addQuickElement(u"wp:comment_author_email", comment['user_email'])
         handler.addQuickElement(u"wp:comment_author_url", comment['user_url'])
         handler.addQuickElement(u"wp:comment_author_IP", comment['ip_address'])
         handler.addQuickElement(u"wp:comment_date_gmt", 
             feedgenerator.rfc3339_date(comment['submit_date']).decode('utf-8'))
-        handler.addQuickElement(u"wp:comment_content", comment['comment'])
+        handler.addQuickElement(u"wp:comment_content", "<![CDATA[%s]]>" % comment['comment'])
         handler.addQuickElement(u"wp:comment_approved", comment['is_approved'])
         if comment['parent'] is not None:
             handler.addQuickElement(u"wp:comment_parent", comment['parent'])
@@ -97,7 +96,7 @@ class BaseWxrFeed(Feed):
         current_site = get_current_site(request)
         
         link = self._Feed__get_dynamic_attr('link', obj)
-        link = add_domain(current_site.domain, link, request.is_secure())
+        link = add_domain(current_site.domain, link)
         feed = self.feed_type(
             title = self._Feed__get_dynamic_attr('title', obj),
             link = link,
@@ -136,7 +135,6 @@ class BaseWxrFeed(Feed):
             link = add_domain(
                 current_site.domain,
                 self._Feed__get_dynamic_attr('item_link', item),
-                request.is_secure(),
             )
             
             pubdate = self._Feed__get_dynamic_attr('item_pubdate', item)
