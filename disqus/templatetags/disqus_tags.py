@@ -2,6 +2,7 @@ from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.utils.functional import curry
+from django.utils.encoding import force_unicode
 
 register = template.Library()
 
@@ -23,7 +24,7 @@ class ContextSetterNode(template.Node):
     
     def render(self, context):
         if isinstance(self.var_value, (list, tuple)):
-            var_value = ''.join([str(self._get_value(x, context)) for x in self.var_value])
+            var_value = ''.join([force_unicode(self._get_value(x, context)) for x in self.var_value])
         else:
             var_value = self._get_value(self.var_value, context)
         context[self.var_name] = var_value
