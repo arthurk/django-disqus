@@ -1,11 +1,14 @@
 import datetime
 
-from django.utils import feedgenerator, tzinfo
-from django.contrib.syndication.views import Feed, add_domain
-from django.utils.encoding import force_unicode, iri_to_uri
 from django import template
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
+from django.contrib.syndication.views import Feed, add_domain
+from django.utils import feedgenerator, tzinfo
+from django.utils.encoding import force_unicode, iri_to_uri
+
+USE_SINGLE_SIGNON = getattr(settings, "DISQUS_USE_SINGLE_SIGNON", False)
 
 class WxrFeedType(feedgenerator.Rss201rev2Feed):
     def rss_attributes(self):
@@ -16,6 +19,9 @@ class WxrFeedType(feedgenerator.Rss201rev2Feed):
             u'xmlns:dc': u"http://purl.org/dc/elements/1.1/",
             u'xmlns:wp': u"http://wordpress.org/export/1.0/",
         }
+    
+    def format_date(self, date):
+        return date.strftime('%Y-%m-%d %H:%M:%S')
     
     def add_item(self, title, link, description, author_email=None,
         author_name=None, author_link=None, pubdate=None, comments=None,
@@ -61,22 +67,23 @@ class WxrFeedType(feedgenerator.Rss201rev2Feed):
         handler.addQuickElement(u"content:encoded", item['description'])
         handler.addQuickElement(u'dsq:thread_identifier', item['unique_id'])
         handler.addQuickElement(u'wp:post_date_gmt', 
-            feedgenerator.rfc3339_date(item['pubdate']).decode('utf-8'))
+            self.format_date(item['pubdate']).decode('utf-8'))
         handler.addQuickElement(u'wp:comment_status', item['comment_status'])
         self.write_comments(handler, item['comments'])
         
     def add_comment_elements(self, handler, comment):
-        handler.startElement(u"dsq:remote", {})
-        handler.addQuickElement(u"dsq:id", comment['user_id'])
-        handler.addQuickElement(u"dsq:avatar", comment['avatar'])
-        handler.endElement(u"dsq:remote")
+        if USE_SINGLE_SIGNON:
+            handler.startElement(u"dsq:remote", {})
+            handler.addQuickElement(u"dsq:id", comment['user_id'])
+            handler.addQuickElement(u"dsq:avatar", comment['avatar'])
+            handler.endElement(u"dsq:remote")
         handler.addQuickElement(u"wp:comment_id", comment['id'])
         handler.addQuickElement(u"wp:comment_author", comment['user_name'])
         handler.addQuickElement(u"wp:comment_author_email", comment['user_email'])
         handler.addQuickElement(u"wp:comment_author_url", comment['user_url'])
         handler.addQuickElement(u"wp:comment_author_IP", comment['ip_address'])
         handler.addQuickElement(u"wp:comment_date_gmt", 
-            feedgenerator.rfc3339_date(comment['submit_date']).decode('utf-8'))
+            self.format_date(comment['submit_date']).decode('utf-8'))
         handler.addQuickElement(u"wp:comment_content", comment['comment'])
         handler.addQuickElement(u"wp:comment_approved", comment['is_approved'])
         if comment['parent'] is not None:
@@ -138,7 +145,7 @@ class BaseWxrFeed(Feed):
             )
             
             pubdate = self._Feed__get_dynamic_attr('item_pubdate', item)
-            if pubdate and not pubdate.tzinfo:
+            if pubdate and not hasattr(pubdate, 'tzinfo'):
                 ltz = tzinfo.LocalTimezone(pubdate)
                 pubdate = pubdate.replace(tzinfo=ltz)
             
@@ -168,7 +175,7 @@ class BaseWxrFeed(Feed):
                 'submit_date': self._Feed__get_dynamic_attr('comment_submit_date', comment),
                 'comment': self._Feed__get_dynamic_attr('comment_comment', comment),
                 'is_approved': str(self._Feed__get_dynamic_attr('comment_is_approved', comment)),
-                'parent': self._Feed__get_dynamic_attr('comment_parent', comment),
+                'parent': str(self._Feed__get_dynamic_attr('comment_parent', comment)),
             })
         return output
         
@@ -213,5 +220,5 @@ class ContribCommentsWxrFeed(BaseWxrFeed):
     def comment_is_approved(self, comment):
         return int(comment.is_public)
     
-    comment_parent = None
+    comment_parent = 0
     
