@@ -1,0 +1,16 @@
+django-disqus 0.4
+=================
+
+**Release Date**: 21-MAR-2011
+
+- Fix for unicode titles in urlencode (http://bugs.python.org/issue1349732).
+  Thanks `Adriano Petrich <https://github.com/frac>`_.
+- New templatetags to set context variables:
+    - set_disqus_developer
+    - set_disqus_identifier
+    - set_disqus_url
+    - set_disqus_title
+- Export comments as WXR feed
+
+A huge thanks to `Corey Oordt <https://github.com/coordt>`_, who
+implemented the new templatetags and the WXR feed.

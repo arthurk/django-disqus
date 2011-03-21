@@ -10,6 +10,7 @@ Export existing comments to and integrate DISQUS_ into your Django_ website.
 - Export ``django.contrib.comments`` to DISQUS
 - Dump comments from DISQUS into a local JSON file
 - Templatetags
+- Exporting Comments as WXR
 
 django-disqus is available open-source under the BSD license. If you'd like
 to help out, you can fork the project at http://github.com/arthurk/django-disqus
@@ -27,5 +28,6 @@ Contents
    installation
    templatetags
    commands
+   exporting_wxr
    releasenotes/index
 
