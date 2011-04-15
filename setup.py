@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
     name='django-disqus',
     version='0.4',
-    description='Export existing comments and integrate DISQUS into your Django website',
+    description='Export comments and integrate DISQUS into your Django website',
     author='Arthur Koziel',
     author_email='arthur@arthurkoziel.com',
     url='http://arthurk.github.com/django-disqus/',
