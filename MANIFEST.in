@@ -1,5 +1,3 @@
 include LICENSE.txt
 include README.markdown
 recursive-include disqus/templates *.html
-
-prune example/
