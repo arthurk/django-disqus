@@ -29,5 +29,5 @@ Contents
    templatetags
    commands
    exporting_wxr
-   releasenotes/index
+   releasenotes
 
