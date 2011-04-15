@@ -36,5 +36,21 @@ Example settings.py::
     DISQUS_API_KEY = 'FOOBARFOOBARFOOBARFOOBARFOOBARF'
     DISQUS_WEBSITE_SHORTNAME = 'foobar' 
 
+Finally, you need to change the domain of your Site to the domain you're
+actually going to use for your website. The easiest way to do this is to enable
+`django.contrib.admin` and just click on the `Site` object to modify it. If you
+don't have contrib.admin installed (or don't want to install it), you can run
+`python manage.py shell` and change the value in the cli::
+
+    >>> from django.contrib.sites.models import Site
+    >>> Site.objects.all()
+    [<Site: example.org>]
+    >>> s = Site.objects.all()[0]
+    >>> s.domain = 'arthurkoziel.com'
+    >>> s.name = 'arthurkoziel.com'
+    >>> s.save()
+    >>> Site.objects.all()
+    [<Site: arthurkoziel.com>]
+
 .. _get your API key here: http://disqus.com/api/get_my_key/
 .. _DISQUS: http://disqus.com
