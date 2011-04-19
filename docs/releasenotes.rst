@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+django-disqus 0.4.1 (19-APR-2011)
+---------------------------------
+
+- Fix installation on Windows (Bug #11)
+
 django-disqus 0.4 (21-MAR-2011)
 -------------------------------
 
