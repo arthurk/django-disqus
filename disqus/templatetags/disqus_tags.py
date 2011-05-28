@@ -90,6 +90,22 @@ def disqus_num_replies(context, shortname=''):
         'config': get_config(context),
     }
 
+def disqus_recent_comments(context, shortname='', num_items=5, excerpt_length=200, hide_avatars=0, avatar_size=32):
+    """
+    Return the HTML/js code which shows recent comments.
+
+    """
+    shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
+    
+    return {
+        'shortname': shortname,
+        'num_items': num_items,
+        'hide_avatars': hide_avatars,
+        'avatar_size': avatar_size,
+        'excerpt_length': excerpt_length,
+        'config': get_config(context),
+    }
+
 def disqus_show_comments(context, shortname=''):
     """
     Return the HTML code to display DISQUS comments.
@@ -106,4 +122,5 @@ register.tag('set_disqus_url', set_disqus_url)
 register.tag('set_disqus_title', set_disqus_title)
 register.simple_tag(disqus_dev)
 register.inclusion_tag('disqus/num_replies.html', takes_context=True)(disqus_num_replies)
+register.inclusion_tag('disqus/recent_comments.html', takes_context=True)(disqus_recent_comments)
 register.inclusion_tag('disqus/show_comments.html', takes_context=True)(disqus_show_comments)

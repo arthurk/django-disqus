@@ -57,6 +57,36 @@ Result::
    ``settings.DISQUS_WEBSITE_SHORTNAME`` setting takes precedence
    over this parameter. Example: ``{% disqus_show_comments "foobar" %}``
 
+.. _disqus_recent_comments:
+
+disqus_recent_comments
+--------------------
+
+Renders the ``disqus/recent_comments.html`` template to display a certail number of
+recent DISQUS comments on your site, including any configuration variables set in 
+this template block. See the `embed code <http://disqus.com/admin/tools/#widget=recent>`_ 
+for more information.
+
+Example::
+
+    {% load disqus_tags %}
+    {% disqus_recent_comments shortname num_items excerpt_length hide_avatars avatar_size %}
+
+    {% disqus_recent_comments shortname 5 50 0 24 %} - will show 5 comments, truncated to 50 symbols
+    with avatars 24x24px
+    {% disqus_recent_comments shortname 10 50 1 %} - show 10 comments, truncated to 50 symbols
+    without avatars
+
+**Options**:
+
+ - ``shortname``: DISQUS website shortname that should be used. The
+   ``settings.DISQUS_WEBSITE_SHORTNAME`` setting takes precedence
+   over this parameter.
+ - ``num_items``: How many comments to show(default is to show 5 comments)
+ - ``excerpt_length``: Truncate length of comment to a certain number(default is 200 symbols)
+ - ``hide_avatars``: Whether to show avatars or not(default is to show)
+ - ``avatar_size``: Size (in px) of avatar (default 32x32)
+
 .. _disqus_num_replies:
 
 disqus_num_replies
