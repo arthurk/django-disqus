@@ -27,6 +27,9 @@ class Command(NoArgsCommand):
         make_option('-c', '--continue-on-error', action="store_true", dest="continue_on_error",
                     help="If an error is encountered print a warning and continue. " +
                          "Default behaviour is to quit."),
+        make_option('-l', '--log-file', action="store", dest="log_file",
+                    help="Log file - if specified details of data errors " +
+                         "will be stored here."),
     )
     help = 'Export comments from contrib.comments to DISQUS'
     requires_model_validation = False
@@ -67,6 +70,7 @@ class Command(NoArgsCommand):
         state_file = options.get('state_file')
         jump_store = bool(options.get('jump_store'))
         continue_on_error = bool(options.get('continue_on_error'))
+        log_file = options.get('log_file')
         last_exported_id = None
 
         if state_file is not None and os.path.exists(state_file):
@@ -78,11 +82,9 @@ class Command(NoArgsCommand):
         comments_count = exp_comments.count()
         if verbosity >= 1:
             print "Exporting %d comment(s)" % comments_count
-
-        # if this is a dry run, we output the comments and exit
         if dry_run:
-            print comments
-            return
+            print "DRY RUN"
+
         # if no comments were found we also exit
         if not comments_count:
             return
@@ -104,83 +106,99 @@ class Command(NoArgsCommand):
             user_api_key=settings.DISQUS_API_KEY,
             forum_id=forum['id'])
 
-        for i, comment in enumerate(exp_comments):
-            if verbosity >= 1:
-                print "Exporting comment %s/%s (%s%%)" % \
-                   (i+1, comments_count, round((float(i)/comments_count)*100, 2)),
+        with open(log_file, 'a') as log_file_fd:
+            for i, comment in enumerate(exp_comments):
+                if verbosity >= 1:
+                    print "Exporting comment %s/%s (%s%%)" % \
+                       (i+1, comments_count, round((float(i)/comments_count)*100, 2)),
 
-            comment_str = None
-            try:
-                # Try to find a thread with the comments URL.
-                url_path = comment.content_object.get_absolute_url()
-                comment_str = str(comment).replace('\n', '').replace('\r', '')
-            except (AttributeError, ObjectDoesNotExist), e:
-                print
-                print 'ERROR: %s' % e
-                if comment_str is not None:
-                    print '  Comment contents: "%s"' % (str(comment)[:30],)
-                if comment.content_object is not None:
-                    model = comment.content_object.__class__
-                else:
-                    model = comment.content_object
-                print '  Comment pk: %s. Content object: %s (model: %s - pk: %s)' % \
-                    (comment.pk, comment.content_object, model, comment.object_pk,)
-                if continue_on_error:
+                comment_str = None
+                try:
+                    # Try to find a thread with the comments URL.
+                    url_path = comment.content_object.get_absolute_url()
+                    comment_str = str(comment).replace('\n', '').replace('\r', '')
+                except (AttributeError, ObjectDoesNotExist), e:
+                    output = []
+                    if verbosity >= 1:
+                        print
+                    line_1 = 'ERROR (comment pk: %s): %s' % (comment.pk, e)
+                    print line_1
+                    output.append(line_1)
+
+                    if comment_str is not None:
+                        output.append('Comment contents: "%s"' % (str(comment)[:30],))
+                    if comment.content_object is not None:
+                        model = comment.content_object.__class__
+                    else:
+                        model = comment.content_object
+                    output.append('  Comment pk: %s. Content object: %s (model: %s - pk: %s)' % \
+                        (comment.pk, comment.content_object, model, comment.object_pk,))
+                    if verbosity >= 1:
+                        # we earlier printed the first line to output regardless of verbosity
+                        print '\n  '.join(output[1:])
+                    if log_file:
+                        log_file_fd.write('\n  '.join(output))
+                        log_file_fd.write('\n')
+                    if continue_on_error:
+                        continue
+                    else:
+                        sys.exit(1)
+
+                if verbosity >= 1:
+                    print ": '%s'" % (comment_str,)
+
+                if dry_run:
+                    self._save_state(state_file, comment.pk)
                     continue
-                else:
+
+                url = 'http://%s%s' % (
+                    current_site.domain,
+                    url_path)
+                thread = client.get_thread_by_url(
+                    url=url,
+                    forum_api_key=forum_api_key)
+
+                # if no thread with the URL could be found, we create a new one.
+                # to do this, we first need to create the thread and then
+                # update the thread with a URL.
+                if not thread:
+                    thread = client.thread_by_identifier(
+                        forum_api_key=forum_api_key,
+                        identifier=unicode(comment.content_object),
+                        title=unicode(comment.content_object),
+                    )['thread']
+                    client.update_thread(
+                        forum_api_key=forum_api_key,
+                        thread_id=thread['id'],
+                        url=url)
+
+                # name and email are optional in contrib.comments but required
+                # in DISQUS. If they are not set, dummy values will be used
+                try:
+                    client.create_post(
+                        forum_api_key=forum_api_key,
+                        thread_id=thread['id'],
+                        message=comment.comment.encode('utf-8'),
+                        author_name=comment.userinfo.get('name',
+                                                         'nobody').encode('utf-8'),
+                        author_email=comment.userinfo.get('email',
+                                                          'nobody@example.org'),
+                        author_url=comment.userinfo.get('url', ''),
+                        created_at=comment.submit_date.strftime('%Y-%m-%dT%H:%M'))
+                except urllib2.HTTPError, e:
+                    if verbosity == 0:
+                      sys.exit(1)
+                    print e
+                    print dir(e)
+                    print 'HTTP: args: ', e.args
+                    print 'HTTP: code:', e.code
+                    print 'HTTP: errno:', e.errno
+                    print 'HTTP: geturl:', e.geturl()
+                    print 'HTTP: headers:', e.headers
+                    print 'HTTP: msg:', e.msg
+                    print 'HTTP: strerror:', e.strerror
+                    print 'HTTP: url:', e.url
                     sys.exit(1)
 
-            if verbosity >= 1:
-                print ": '%s'" % (comment_str,)
-
-            url = 'http://%s%s' % (
-                current_site.domain,
-                url_path)
-            thread = client.get_thread_by_url(
-                url=url,
-                forum_api_key=forum_api_key)
-
-            # if no thread with the URL could be found, we create a new one.
-            # to do this, we first need to create the thread and then
-            # update the thread with a URL.
-            if not thread:
-                thread = client.thread_by_identifier(
-                    forum_api_key=forum_api_key,
-                    identifier=unicode(comment.content_object),
-                    title=unicode(comment.content_object),
-                )['thread']
-                client.update_thread(
-                    forum_api_key=forum_api_key,
-                    thread_id=thread['id'],
-                    url=url)
-
-            # name and email are optional in contrib.comments but required
-            # in DISQUS. If they are not set, dummy values will be used
-            try:
-                client.create_post(
-                    forum_api_key=forum_api_key,
-                    thread_id=thread['id'],
-                    message=comment.comment.encode('utf-8'),
-                    author_name=comment.userinfo.get('name',
-                                                     'nobody').encode('utf-8'),
-                    author_email=comment.userinfo.get('email',
-                                                      'nobody@example.org'),
-                    author_url=comment.userinfo.get('url', ''),
-                    created_at=comment.submit_date.strftime('%Y-%m-%dT%H:%M'))
-            except urllib2.HTTPError, e:
-                if verbosity == 0:
-                  sys.exit(1)
-                print e
-                print dir(e)
-                print 'HTTP: args: ', e.args
-                print 'HTTP: code:', e.code
-                print 'HTTP: errno:', e.errno
-                print 'HTTP: geturl:', e.geturl()
-                print 'HTTP: headers:', e.headers
-                print 'HTTP: msg:', e.msg
-                print 'HTTP: strerror:', e.strerror
-                print 'HTTP: url:', e.url
-                sys.exit(1)
-
-            if state_file is not None:
-                self._save_state(state_file, comment.pk)
+                if state_file is not None:
+                    self._save_state(state_file, comment.pk)
