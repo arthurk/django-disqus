@@ -1,5 +1,5 @@
 from optparse import make_option
-import os.path
+import os
 import sys
 import urllib2
 
@@ -71,6 +71,8 @@ class Command(NoArgsCommand):
         jump_store = bool(options.get('jump_store'))
         continue_on_error = bool(options.get('continue_on_error'))
         log_file = options.get('log_file')
+        if not log_file:
+            log_file = os.devnull
         last_exported_id = None
 
         if state_file is not None and os.path.exists(state_file):
