@@ -66,7 +66,8 @@ def get_config(context):
             output.append('\tvar %s = "%s";' % (item, context[item]))
     return '\n'.join(output)
 
-def disqus_dev():
+@register.simple_tag(takes_context=True)
+def disqus_dev(context):
     """
     Return the HTML/js code to enable DISQUS comments on a local
     development server if settings.DEBUG is True.
@@ -74,8 +75,8 @@ def disqus_dev():
     if settings.DEBUG:
         return """<script type="text/javascript">
     var disqus_developer = 1;
-    var disqus_url = 'http://%s/';
-</script>""" % Site.objects.get_current().domain
+    var disqus_url = 'http://%s%s';
+</script>""" % (Site.objects.get_current().domain, context['request'].path)
     return ""
 
 def disqus_num_replies(context, shortname=''):
@@ -120,7 +121,6 @@ register.tag('set_disqus_developer', set_disqus_developer)
 register.tag('set_disqus_identifier', set_disqus_identifier)
 register.tag('set_disqus_url', set_disqus_url)
 register.tag('set_disqus_title', set_disqus_title)
-register.simple_tag(disqus_dev)
 register.inclusion_tag('disqus/num_replies.html', takes_context=True)(disqus_num_replies)
 register.inclusion_tag('disqus/recent_comments.html', takes_context=True)(disqus_recent_comments)
 register.inclusion_tag('disqus/show_comments.html', takes_context=True)(disqus_show_comments)
