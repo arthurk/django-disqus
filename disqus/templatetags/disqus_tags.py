@@ -1,3 +1,9 @@
+import base64
+import hashlib
+import hmac
+import simplejson
+import time
+
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
@@ -78,6 +84,48 @@ def disqus_dev(context):
     var disqus_url = 'http://%s%s';
 </script>""" % (Site.objects.get_current().domain, context['request'].path)
     return ""
+
+@register.simple_tag(takes_context=True)
+def disqus_sso(context):
+    """
+    Return the HTML/js code to enable DISQUS SSO - so logged in users on
+    your site can be logged in to disqus seemlessly.
+    """
+    # we have to make it str rather than unicode or the HMAC blows up
+    DISQUS_SECRET_KEY = str(getattr(settings, 'DISQUS_SECRET_KEY', None))
+    if DISQUS_SECRET_KEY is None:
+        return "<p>You need to set DISQUS_SECRET_KEY before you can use SSO</p>"
+    DISQUS_PUBLIC_KEY = getattr(settings, 'DISQUS_PUBLIC_KEY', None)
+    if DISQUS_PUBLIC_KEY is None:
+        return "<p>You need to set DISQUS_PUBLIC_KEY before you can use SSO</p>"
+    user = context['user']
+    if user.is_anonymous():
+        return ""
+    # create a JSON packet of our data attributes
+    data = simplejson.dumps({
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+    })
+    # encode the data to base64
+    message = base64.b64encode(data)
+    # generate a timestamp for signing the message
+    timestamp = int(time.time())
+    # generate our hmac signature
+    sig = hmac.HMAC(DISQUS_SECRET_KEY, '%s %s' % (message, timestamp), hashlib.sha1).hexdigest()
+ 
+    # return a script tag to insert the sso message
+    return """<script type="text/javascript">
+var disqus_config = function() {
+this.page.remote_auth_s3 = "%(message)s %(sig)s %(timestamp)s";
+this.page.api_key = "%(pub_key)s";
+}
+</script>""" % dict(
+        message=message,
+        timestamp=timestamp,
+        sig=sig,
+        pub_key=DISQUS_PUBLIC_KEY,
+    )
 
 def disqus_num_replies(context, shortname=''):
     """
