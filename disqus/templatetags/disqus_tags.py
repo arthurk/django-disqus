@@ -2,7 +2,11 @@ from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.utils.functional import curry
-from django.utils.encoding import force_unicode
+try:
+    # compat with py2
+    from django.utils.encoding import force_unicode
+except ImportError:
+    force_unicode = lambda x: x  # compat with py3
 
 register = template.Library()
 
@@ -10,7 +14,7 @@ class ContextSetterNode(template.Node):
     def __init__(self, var_name, var_value):
         self.var_name = var_name
         self.var_value = var_value
-    
+
     def _get_value(self, value, context):
         """
         Attempts to resolve the value as a variable. Failing that, it returns
@@ -21,7 +25,7 @@ class ContextSetterNode(template.Node):
         except template.VariableDoesNotExist:
             var_value = self.var_value.var
         return var_value
-    
+
     def render(self, context):
         if isinstance(self.var_value, (list, tuple)):
             var_value = ''.join([force_unicode(self._get_value(x, context)) for x in self.var_value])
@@ -33,7 +37,7 @@ class ContextSetterNode(template.Node):
 def generic_setter_compiler(var_name, name, node_class, parser, token):
     """
     Returns a ContextSetterNode.
-    
+
     For calls like {% set_this_value "My Value" %}
     """
     bits = token.split_contents()
@@ -59,7 +63,7 @@ def get_config(context):
     return the formatted javascript for any disqus config variables
     """
     conf_vars = ['disqus_developer', 'disqus_identifier', 'disqus_url', 'disqus_title']
-    
+
     output = []
     for item in conf_vars:
         if item in context:
@@ -84,7 +88,7 @@ def disqus_num_replies(context, shortname=''):
     #disqus_thread anchor into the threads comment count.
     """
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
-    
+
     return {
         'shortname': shortname,
         'config': get_config(context),
@@ -96,7 +100,7 @@ def disqus_recent_comments(context, shortname='', num_items=5, excerpt_length=20
 
     """
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
-    
+
     return {
         'shortname': shortname,
         'num_items': num_items,

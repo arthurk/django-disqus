@@ -1,9 +1,13 @@
-import urllib
-import urllib2
+try:
+    import urllib2  # compat with py2
+    urlopen = urllib2.urlopen
+except ImportError:
+    import urllib  # compat with py3
+    urlopen = urllib.request.urlopen
 
 from django.core.management.base import CommandError
 from django.utils import simplejson as json
-from django.conf import settings
+
 
 def call(method, data, post=False):
     """
@@ -19,7 +23,7 @@ def call(method, data, post=False):
         # GET request
         url += "?%s" % urllib.urlencode(data)
         data = ''
-    res = json.load(urllib2.urlopen(url, data))
+    res = json.load(urlopen(url, data))
     if not res['succeeded']:
         raise CommandError("'%s' failed: %s\nData: %s" % (method, res['code'], data))
     return res['message']
