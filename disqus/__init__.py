@@ -1,9 +1,13 @@
 try:
     import urllib2  # compat with py2
+    import urllib
     urlopen = urllib2.urlopen
+    urlencode = urllib.urlencode
 except ImportError:
-    import urllib  # compat with py3
-    urlopen = urllib.request.urlopen
+    from urllib import parse
+    from urllib import request # compat with py3
+    urlopen = request.urlopen
+    urlencode = parse.urlencode
 
 from django.core.management.base import CommandError
 from django.utils import simplejson as json
