@@ -51,7 +51,7 @@ class Command(NoArgsCommand):
             fp.close()
 
     def handle(self, **options):
-        current_site = Site.objects.get_current()
+        current_site = settings.DISQUS_URL
         client = DisqusClient()
         verbosity = int(options.get('verbosity'))
         dry_run = bool(options.get('dry_run'))
