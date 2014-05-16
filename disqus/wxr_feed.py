@@ -100,7 +100,7 @@ class BaseWxrFeed(Feed):
     feed_type = WxrFeedType
     
     def get_feed(self, obj, request):
-        current_site = Site.objects.get_current()
+        current_site = settings.DISQUS_URL
         
         link = self._Feed__get_dynamic_attr('link', obj)
         link = add_domain(current_site.domain, link)
