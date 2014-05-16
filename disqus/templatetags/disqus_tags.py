@@ -74,8 +74,8 @@ def disqus_dev():
     if settings.DEBUG:
         return """<script type="text/javascript">
     var disqus_developer = 1;
-    var disqus_url = 'http://%s/';
-</script>""" % Site.objects.get_current().domain
+    var disqus_url = '%s';
+</script>""" % settings.DISQUS_URL
     return ""
 
 def disqus_num_replies(context, shortname=''):
