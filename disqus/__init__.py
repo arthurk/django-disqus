@@ -9,8 +9,8 @@ except ImportError:
     urlopen = request.urlopen
     urlencode = parse.urlencode
 
+import json
 from django.core.management.base import CommandError
-from django.utils import simplejson as json
 
 
 def call(method, data, post=False):
