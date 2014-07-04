@@ -74,7 +74,7 @@ def disqus_dev():
     if settings.DEBUG:
         return """<script type="text/javascript">
     var disqus_developer = 1;
-    var disqus_url = 'http://%s/';
+    var disqus_url = '//%s/';
 </script>""" % Site.objects.get_current().domain
     return ""
 
