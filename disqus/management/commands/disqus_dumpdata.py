@@ -1,11 +1,6 @@
+import json
 from optparse import make_option
 
-try:
-    import json
-except ImportError:
-    # Python 2.5 and Django < 1.6
-    from django.utils import simplejson as json
-    
 from django.core.management.base import NoArgsCommand, CommandError
 
 from disqus.api import DisqusClient

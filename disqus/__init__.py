@@ -1,3 +1,5 @@
+import json
+
 try:
     from urllib.parse import urlencode
     from urllib.request import urlopen
@@ -5,12 +7,6 @@ except ImportError:
     # Python 2
     from urllib import urlencode
     from urllib2 import urlopen
-
-try:
-    import json
-except ImportError:
-    # Python 2.5 and Django < 1.6
-    from django.utils import simplejson as json
 
 from django.core.management.base import CommandError
 

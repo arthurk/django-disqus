@@ -1,7 +1,7 @@
 import base64
 import hashlib
 import hmac
-import simplejson
+import json
 import time
 
 from django import template
@@ -85,7 +85,7 @@ def disqus_sso(context):
     if user.is_anonymous():
         return ""
     # create a JSON packet of our data attributes
-    data = simplejson.dumps({
+    data = json.dumps({
         'id': user.id,
         'username': user.username,
         'email': user.email,
