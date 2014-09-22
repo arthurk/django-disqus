@@ -1,7 +1,10 @@
 import base64
 import hashlib
 import hmac
-import simplejson
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json
 import time
 
 from django import template
@@ -65,7 +68,7 @@ def disqus_dev(context):
     if settings.DEBUG:
         return """<script type="text/javascript">
     var disqus_developer = 1;
-    var disqus_url = '//%s%s';
+    var disqus_url = 'http://%s%s';
 </script>""" % (Site.objects.get_current().domain, context['request'].path)
     return ""
 
@@ -86,7 +89,7 @@ def disqus_sso(context):
     if user.is_anonymous():
         return ""
     # create a JSON packet of our data attributes
-    data = simplejson.dumps({
+    data = json.dumps({
         'id': user.id,
         'username': user.username,
         'email': user.email,
