@@ -56,6 +56,58 @@ Result::
  - ``shortname``: DISQUS website shortname that should be used. The
    ``settings.DISQUS_WEBSITE_SHORTNAME`` setting takes precedence
    over this parameter. Example: ``{% disqus_show_comments "foobar" %}``
+   
+.. _disqus_sso:
+
+disqus_sso
+--------------------
+
+Renders the ``disqus/sso.html`` template to render a disqus SSO config block.
+Values for ``settings.DISQUS_SECRET_KEY`` and ``settings.DISQUS_PUBLIC_KEY`` must
+be defined. See the 
+`embed code <https://help.disqus.com/customer/portal/articles/236206>`_ for
+more information.
+
+Example::
+
+    {% load disqus_tags %}
+    {% disqus_sso %}
+
+Result::
+
+	<script type="text/javascript">    
+		var disqus_config = function () {
+		    this.page.remote_auth_s3 = '<message> <hmac> <timestamp>';
+		    this.page.api_key = 'public_api_key';
+		
+		    this.sso = {
+		          name:   'shortname',
+		          button: 'http://example.com/images/samplenews.gif',
+		          icon:   'http://example.com/favicon.png',
+		          url:    'http://example.com/login/',
+		          logout: 'http://example.com/logout/',
+		          width:  '800',
+		          height: '400'
+		    };
+		};
+	</script>
+
+**Options**:
+
+ - ``shortname``: DISQUS website shortname that should be used. The
+   ``settings.DISQUS_WEBSITE_SHORTNAME`` setting takes precedence
+   over this parameter.
+ - ``login_url``: Address of the login page. The page will be opened in a new window and it
+   must close itself after authentication is done. That's how disqus will know it is done and
+   reload the page. Will default to ``settings.LOGIN_URL`` if not specified.
+ - ``logout_url``: Address of the logout page. This page must redirect user back to the original
+   page after logout. Will default to ``settings.LOGOUT_URL`` if not specified.
+ - ``button_url``: Address of the image that acts as a button. Refer to disqus documentation
+   for style guide. Will default to ``settings.DISQUS_LOGIN_BUTTON`` if not specified.
+ - ``login_width``: Width of the login popup window.
+   Will default to ``settings.DISQUS_LOGIN_WINDOW_WIDTH`` if not specified.
+ - ``login_height``: Height of the login popup window.
+   Will default to ``settings.DISQUS_LOGIN_WINDOW_HEIGHT`` if not specified.
 
 .. _disqus_recent_comments:
 
