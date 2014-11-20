@@ -1,0 +1,15 @@
+<script type="text/javascript">
+	var disqus_config = function() {
+    	this.page.remote_auth_s3 = '{{ message }} {{ hmac }} {{ timestamp }}';
+    	this.page.api_key = '{{ public_api_key }}';
+    
+        this.sso = {
+                  name:   '{{ shortname }}',
+                  button: '{{ button_url }}',
+                  url:    '{{ login_url }}',
+                  logout: '{{ logout_url }}',
+                  width:  '{{ login_width }}',
+                  height: '{{ login_height }}'
+        };
+    }
+</script>
