@@ -5,7 +5,10 @@ from django.conf import settings
 from django.contrib import comments
 from django.contrib.sites.models import Site
 from django.core.management.base import NoArgsCommand
-from django.utils import simplejson as json
+try:
+    from django.utils import simplejson as json
+except ImportError:
+    import json
 
 from disqus.api import DisqusClient
 
@@ -74,8 +77,8 @@ class Command(NoArgsCommand):
         if not comments_count:
             return
 
-        # Get a list of all forums for an API key. Each API key can have 
-        # multiple forums associated. This application only supports the one 
+        # Get a list of all forums for an API key. Each API key can have
+        # multiple forums associated. This application only supports the one
         # set in the DISQUS_WEBSITE_SHORTNAME variable
         forum_list = client.get_forum_list(user_api_key=settings.DISQUS_API_KEY)
         try:
@@ -104,7 +107,7 @@ class Command(NoArgsCommand):
                 forum_api_key=forum_api_key)
 
             # if no thread with the URL could be found, we create a new one.
-            # to do this, we first need to create the thread and then 
+            # to do this, we first need to create the thread and then
             # update the thread with a URL.
             if not thread:
                 thread = client.thread_by_identifier(

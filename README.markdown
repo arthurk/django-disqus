@@ -10,3 +10,5 @@ Features:
 - Exporting Comments as WXR
 
 The documentation is available at [http://django-disqus.readthedocs.org/](http://django-disqus.readthedocs.org/).
+
+Fix for Django 1.7
