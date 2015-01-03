@@ -1,3 +1,4 @@
+import json
 from optparse import make_option
 import os.path
 
@@ -5,7 +6,6 @@ from django.conf import settings
 from django.contrib import comments
 from django.contrib.sites.models import Site
 from django.core.management.base import NoArgsCommand
-from django.utils import simplejson as json
 
 from disqus.api import DisqusClient
 
