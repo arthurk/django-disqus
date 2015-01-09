@@ -1,13 +1,14 @@
 import json
 
-try:
-    from urllib.parse import urlencode
-    from urllib.error import URLError
-    from urllib.request import ProxyHandler, Request, urlopen, build_opener, install_opener
-except ImportError:
-    # Python 2
-    from urllib import urlencode
-    from urllib2 import ProxyHandler, Request, URLError, urlopen, build_opener, install_opener
+from django.utils.six.moves.urllib.parse import urlencode
+from django.utils.six.moves.urllib.error import URLError
+from django.utils.six.moves.urllib.request import (
+    ProxyHandler,
+    Request,
+    urlopen,
+    build_opener,
+    install_opener
+)
 
 
 # A custom ProxyHandler that will not auto-detect proxy settings
