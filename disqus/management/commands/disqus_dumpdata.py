@@ -26,8 +26,8 @@ class Command(NoArgsCommand):
         filter_ = options.get('filter')
         exclude = options.get('exclude')
 
-        # Get a list of all forums for an API key. Each API key can have 
-        # multiple forums associated. This application only supports the one 
+        # Get a list of all forums for an API key. Each API key can have
+        # multiple forums associated. This application only supports the one
         # set in the DISQUS_WEBSITE_SHORTNAME variable
         forum_list = client.get_forum_list(user_api_key=settings.DISQUS_API_KEY)
         try:

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-import logging
 import sys
 from os.path import dirname, abspath
 
 from django.conf import settings
+from django.utils.version import get_version
 
 if not settings.configured:
     settings.configure(
@@ -18,8 +18,13 @@ if not settings.configured:
         ROOT_URLCONF='',
         DEBUG=False,
     )
+    if get_version().split('.')[1] == '7':
+        from django.apps import apps
+        apps.populate(settings.INSTALLED_APPS)
 
-from django.test.simple import run_tests
+
+from django.test.simple import DjangoTestSuiteRunner
+test_runner = DjangoTestSuiteRunner(verbosity=1, interactive=True)
 
 
 def runtests(*test_args):
@@ -27,7 +32,7 @@ def runtests(*test_args):
         test_args = ['disqus']
     parent = dirname(abspath(__file__))
     sys.path.insert(0, parent)
-    failures = run_tests(test_args, verbosity=1, interactive=True)
+    failures = test_runner.run_tests(test_args)
     sys.exit(failures)
 
 

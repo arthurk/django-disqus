@@ -48,7 +48,7 @@ def get_config(context):
     """
     conf_vars = ['disqus_developer', 'disqus_identifier', 'disqus_url',
         'disqus_title', 'disqus_category_id']
-    
+
     output = []
     for item in conf_vars:
         if item in context:
@@ -96,7 +96,7 @@ def disqus_sso(context):
     timestamp = int(time.time())
     # generate our hmac signature
     sig = hmac.HMAC(DISQUS_SECRET_KEY, '%s %s' % (message, timestamp), hashlib.sha1).hexdigest()
- 
+
     # return a script tag to insert the sso message
     return """<script type="text/javascript">
 var disqus_config = function() {
@@ -117,7 +117,7 @@ def disqus_num_replies(context, shortname=''):
     #disqus_thread anchor into the threads comment count.
     """
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
-    
+
     return {
         'shortname': shortname,
         'config': get_config(context),
@@ -130,7 +130,7 @@ def disqus_recent_comments(context, shortname='', num_items=5, excerpt_length=20
 
     """
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
-    
+
     return {
         'shortname': shortname,
         'num_items': num_items,
