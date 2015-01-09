@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import json
 from optparse import make_option
 import os.path
@@ -32,7 +34,7 @@ class Command(NoArgsCommand):
         qs = comments.get_model().objects.order_by('pk')\
                 .filter(is_public=True, is_removed=False)
         if last_export_id is not None:
-            self.stdout.write("Resuming after comment %s\n" % str(last_export_id))
+            print("Resuming after comment %s" % str(last_export_id))
             qs = qs.filter(id__gt=last_export_id)
         return qs
 
@@ -42,7 +44,7 @@ class Command(NoArgsCommand):
         fp = open(state_file)
         try:
             state = int(fp.read())
-            self.stdout.write("Found previous state: %d\n" % (state,))
+            print("Found previous state: %d" % (state,))
         finally:
             fp.close()
         return state
@@ -69,11 +71,11 @@ class Command(NoArgsCommand):
         comments = self._get_comments_to_export(last_exported_id)
         comments_count = comments.count()
         if verbosity >= 1:
-            self.stdout.write("Exporting %d comment(s)\n" % comments_count)
+            print("Exporting %d comment(s)" % comments_count)
 
         # if this is a dry run, we output the comments and exit
         if dry_run:
-            self.stdout.write("%s\n" % (comments,))
+            print("%s" % (comments,))
             return
         # if no comments were found we also exit
         if not comments_count:
@@ -98,7 +100,7 @@ class Command(NoArgsCommand):
 
         for comment in comments:
             if verbosity >= 1:
-                self.stdout.write("Exporting comment '%s'\n" % comment)
+                print("Exporting comment '%s'" % comment)
 
             # Try to find a thread with the comments URL.
             url = 'http://%s%s' % (

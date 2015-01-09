@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import json
 from optparse import make_option
 
@@ -54,5 +56,4 @@ class Command(NoArgsCommand):
             else:
                 start += step
                 posts.append(new_posts)
-        self.stdout.write(json.dumps(posts, indent=indent))
-        self.stdout.write('\n')
+        print(json.dumps(posts, indent=indent))
