@@ -2,8 +2,12 @@ import urllib
 import urllib2
 
 from django.core.management.base import CommandError
-from django.utils import simplejson as json
 from django.conf import settings
+
+try:
+    from django.utils import simplejson as json
+except:
+    pass
 
 def call(method, data, post=False):
     """
