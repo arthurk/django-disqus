@@ -78,25 +78,35 @@ def disqus_sso(context):
     DISQUS_SECRET_KEY = getattr(settings, 'DISQUS_SECRET_KEY', None)
     if DISQUS_SECRET_KEY is None:
         return "<p>You need to set DISQUS_SECRET_KEY before you can use SSO</p>"
+
     DISQUS_PUBLIC_KEY = getattr(settings, 'DISQUS_PUBLIC_KEY', None)
     if DISQUS_PUBLIC_KEY is None:
         return "<p>You need to set DISQUS_PUBLIC_KEY before you can use SSO</p>"
+
     user = context['user']
+
     if user.is_anonymous():
         return ""
+
     # create a JSON packet of our data attributes
     data = json.dumps({
         'id': user.id,
         'username': user.username,
         'email': user.email,
     })
+
     # encode the data to base64
-    message = base64.b64encode(data)
+    message = base64.b64encode(data.encode('utf-8'))
+
     # generate a timestamp for signing the message
     timestamp = int(time.time())
+
+    key = DISQUS_SECRET_KEY.encode('utf-8')
+    msg = ('%s %s' % (message, timestamp)).encode('utf-8')
+    digestmod = hashlib.sha1
+
     # generate our hmac signature
-    # we have to make DISQUS_SECRET_KEY str rather than unicode or the HMAC blows up
-    sig = hmac.HMAC(str(DISQUS_SECRET_KEY), '%s %s' % (message, timestamp), hashlib.sha1).hexdigest()
+    sig = hmac.HMAC(key, msg, digestmod).hexdigest()
 
     # return a script tag to insert the sso message
     return """<script type="text/javascript">
@@ -146,6 +156,7 @@ def disqus_show_comments(context, shortname=''):
     Return the HTML code to display DISQUS comments.
     """
     shortname = getattr(settings, 'DISQUS_WEBSITE_SHORTNAME', shortname)
+
     return {
         'shortname': shortname,
         'config': get_config(context),
