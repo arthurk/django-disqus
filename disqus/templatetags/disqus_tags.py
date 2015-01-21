@@ -44,8 +44,9 @@ def set_disqus_category_id(context, disqus_category_id):
 
 def get_config(context):
     """
-    return the formatted javascript for any disqus config variables
+    Return the formatted javascript for any disqus config variables.
     """
+
     conf_vars = ['disqus_developer', 'disqus_identifier', 'disqus_url',
         'disqus_title', 'disqus_category_id']
 
