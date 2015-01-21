@@ -10,9 +10,21 @@ from django.test.utils import override_settings
 from unittest import TestCase, mock
 
 from disqus.api import DisqusClient, DisqusException
-from disqus.templatetags.disqus_tags import disqus_dev
 from django.utils.six.moves.urllib.error import URLError
 from django.utils.six.moves.urllib.parse import parse_qs, urlparse
+from django.template import Context, Template
+from disqus.templatetags.disqus_tags import (set_disqus_developer,
+                                             set_disqus_identifier,
+                                             set_disqus_url,
+                                             set_disqus_title,
+                                             set_disqus_category_id,
+                                             get_config,
+                                             disqus_dev,
+                                             disqus_sso,
+                                             disqus_num_replies,
+                                             disqus_recent_comments,
+                                             disqus_show_comments
+                                            )
 
 
 class FakeRequest(object):
@@ -65,16 +77,76 @@ class FakeUrlopenNegative(mock.Mock):
         return '{"message":"message content","succeeded":false}'
 
 
+class FakeAnonUser(mock.Mock):
+
+    def is_anonymous(self):
+        return True
+
+
+class FakeUser(mock.Mock):
+
+    id = '1'
+    username = 'flin'
+    email = 'test@test.com'
+
+    def is_anonymous(self):
+        return False
+
+
 class DisqusTemplatetagsTest(TestCase):
 
     def setUp(self):
         self.real_sites_manager = Site.objects
 
+        self.context = {
+            'request': 'some_request',
+            'disqus_developer': 'some_developer',
+            'disqus_identifier': 'some_id',
+            'disqus_url': '//bestsiteever.ten',
+            'disqus_title': 'test title',
+            'disqus_category_id': 'test category'
+        }
+
     def tearDown(self):
         Site.objects = self.real_sites_manager
 
+    # Note: this is not tag.
+    def test_get_config(self):
+        get_config({})
+
+    def test_set_disqus_developer(self):
+
+        set_disqus_developer(self.context, 'Guido')
+
+        self.assertEqual(self.context['disqus_developer'], 'Guido')
+
+    def test_set_disqus_identifier(self):
+
+        set_disqus_identifier(self.context, 'spam', 'ham', 'eggs')
+
+        self.assertEqual(self.context['disqus_identifier'], 'spamhameggs')
+
+    def test_set_disqus_url(self):
+
+        set_disqus_url(self.context, 'spam', 'ham', 'eggs')
+
+        self.assertEqual(self.context['disqus_url'], 'spamhameggs')
+
+    def test_set_disqus_title(self):
+
+        set_disqus_title(self.context, 'Holy Grail')
+
+        self.assertEqual(self.context['disqus_title'], 'Holy Grail')
+
+    def test_set_disqus_category_id(self):
+
+        set_disqus_category_id(self.context, 'Monty Python')
+
+        self.assertEqual(self.context['disqus_category_id'], 'Monty Python')
+
     @override_settings(DEBUG=True)
     def test_disqus_dev_sets_full_url(self):
+
         test_domain = 'example.org'
         url_path = '/path/to/page'
         full_url = '//%s%s' % (test_domain, url_path)
@@ -83,7 +155,181 @@ class DisqusTemplatetagsTest(TestCase):
         # mock out Site manager
         Site.objects = FakeSiteManager(test_domain, 'test')
         generated_html = disqus_dev(context)
+
         self.assertIn(full_url, generated_html)
+
+    @override_settings(DEBUG=False)
+    def test_disqus_dev_if_debug_is_false(self):
+
+        test_domain = 'example.org'
+        url_path = '/path/to/page'
+        context = {'request': FakeRequest(path=url_path)}
+
+        Site.objects = FakeSiteManager(test_domain, 'test')
+
+        generated_html = disqus_dev(context)
+        generated_html_ = disqus_dev({})
+
+        self.assertEqual(generated_html, "")
+        self.assertEqual(generated_html_, "")
+
+    @override_settings(DISQUS_SECRET_KEY=None, DISQUS_PUBLIC_KEY=True)
+    def test_disqus_sso_if_there_is_no_secret_key(self):
+
+        output = disqus_sso({})
+        self.assertIn('You need to set DISQUS_SECRET_KEY before you can use SSO', output)
+
+    @override_settings(DISQUS_PUBLIC_KEY=None, DISQUS_SECRET_KEY=None)
+    def test_disqus_sso_if_there_is_no_public_key_and_no_secret_key(self):
+
+        output = disqus_sso({})
+        self.assertIn('You need to set DISQUS_SECRET_KEY before you can use SSO', output)
+
+    @override_settings(DISQUS_PUBLIC_KEY=None, DISQUS_SECRET_KEY=True)
+    def test_disqus_sso_if_there_is_no_public_key(self):
+
+        output = disqus_sso({})
+        self.assertIn('You need to set DISQUS_PUBLIC_KEY before you can use SSO', output)
+
+    @override_settings(DISQUS_PUBLIC_KEY=True, DISQUS_SECRET_KEY=True)
+    def test_disqus_sso_if_user_is_anonymous(self):
+
+        context = {'user': FakeAnonUser()}
+
+        output = disqus_sso(context)
+        self.assertEqual(output, '')
+
+    # TODO
+    @override_settings(DISQUS_PUBLIC_KEY='a'*64, DISQUS_SECRET_KEY='b'*64)
+    def test_disqus_sso_if_all_inner_tests_passed(self):
+
+        context = {'user': FakeUser()}
+        key = 'a'*64
+
+        output = disqus_sso(context)
+
+        self.assertIn('disqus_config', output)
+        self.assertIn('remote_auth_s3', output)
+        self.assertIn('api_key = "{}"'.format(key), output)
+
+    def test_disqus_num_replies_without_settings(self):
+
+        t1 = Template("{% load disqus_tags %} {% disqus_num_replies %}")
+        t2 = Template("{% load disqus_tags %} {% disqus_num_replies 'foobar' %}")
+
+        render1 = t1.render(Context({}))
+        render2 = t2.render(Context(self.context))
+
+        self.assertIn("var disqus_shortname = '';", render1)
+
+        self.assertIn("var disqus_shortname = 'foobar';", render2)
+        self.assertIn('var disqus_developer = "some_developer";', render2)
+        self.assertIn('var disqus_url = "//bestsiteever.ten";', render2)
+
+    @override_settings(DISQUS_WEBSITE_SHORTNAME='best_test_site_ever')
+    def test_disqus_num_replies_with_settings(self):
+
+        t1 = Template("{% load disqus_tags %} {% disqus_show_comments %}")
+        t2 = Template("{% load disqus_tags %} {% disqus_show_comments 'foobar' %}")
+
+        render1 = t1.render(Context({}))
+        render2 = t2.render(Context(self.context))
+
+        self.assertIn("var disqus_shortname = 'best_test_site_ever';", render1)
+        self.assertNotIn("var disqus_shortname = 'foobar';", render1)
+
+        self.assertIn("var disqus_shortname = 'best_test_site_ever';", render2)
+        self.assertIn('var disqus_identifier = "some_id";', render2)
+        self.assertIn('var disqus_title = "test title";', render2)
+
+    def test_disqus_recent_comments_without_settings(self):
+
+        t1 = Template("{% load disqus_tags %} {% disqus_recent_comments %}")
+        t2 = Template("{% load disqus_tags %} \
+                      {% disqus_recent_comments shortname='foobar' \
+                      num_items=7 \
+                      excerpt_length=400 \
+                      hide_avatars=1 \
+                      avatar_size=50 %}"
+                    )
+
+        render1 = t1.render(Context({}))
+        render2 = t2.render(Context(self.context))
+
+        self.assertIn("var disqus_shortname = '';", render1)
+        self.assertIn("num_items=5", render1)
+        self.assertIn("excerpt_length=200", render1)
+        self.assertIn("hide_avatars=0", render1)
+        self.assertIn("avatar_size=32", render1)
+
+        self.assertIn("var disqus_shortname = 'foobar';", render2)
+        self.assertIn("num_items=7", render2)
+        self.assertIn("excerpt_length=400", render2)
+        self.assertIn("hide_avatars=1", render2)
+        self.assertIn("avatar_size=50", render2)
+
+        self.assertIn('var disqus_category_id = "test category";', render2)
+        self.assertIn('var disqus_url = "//bestsiteever.ten";', render2)
+
+    @override_settings(DISQUS_WEBSITE_SHORTNAME='best_test_site_ever')
+    def test_disqus_recent_comments_with_settings(self):
+
+        t1 = Template("{% load disqus_tags %} {% disqus_recent_comments %}")
+        t2 = Template("{% load disqus_tags %} \
+                      {% disqus_recent_comments shortname='foobar' \
+                      num_items=7 \
+                      excerpt_length=400 \
+                      hide_avatars=1 \
+                      avatar_size=50 %}"
+                    )
+
+        render1 = t1.render(Context({}))
+        render2 = t2.render(Context(self.context))
+
+        self.assertIn("var disqus_shortname = 'best_test_site_ever';", render1)
+        self.assertIn("num_items=5", render1)
+        self.assertIn("excerpt_length=200", render1)
+        self.assertIn("hide_avatars=0", render1)
+        self.assertIn("avatar_size=32", render1)
+
+        self.assertIn("var disqus_shortname = 'best_test_site_ever';", render2)
+        self.assertIn("num_items=7", render2)
+        self.assertIn("excerpt_length=400", render2)
+        self.assertIn("hide_avatars=1", render2)
+        self.assertIn("avatar_size=50", render2)
+
+        self.assertIn('var disqus_category_id = "test category";', render2)
+        self.assertIn('var disqus_url = "//bestsiteever.ten";', render2)
+
+    def test_disqus_show_comments_without_settings(self):
+
+        t1 = Template("{% load disqus_tags %} {% disqus_show_comments %}")
+        t2 = Template("{% load disqus_tags %} {% disqus_show_comments 'foobar' %}")
+
+        render1 = t1.render(Context({}))
+        render2 = t2.render(Context(self.context))
+
+        self.assertIn("var disqus_shortname = '';", render1)
+
+        self.assertIn("var disqus_shortname = 'foobar';", render2)
+        self.assertIn('var disqus_developer = "some_developer";', render2)
+        self.assertIn('var disqus_url = "//bestsiteever.ten";', render2)
+
+    @override_settings(DISQUS_WEBSITE_SHORTNAME='best_test_site_ever')
+    def test_disqus_show_comments_with_settings(self):
+
+        t1 = Template("{% load disqus_tags %} {% disqus_show_comments %}")
+        t2 = Template("{% load disqus_tags %} {% disqus_show_comments 'foobar' %}")
+
+        render1 = t1.render(Context({}))
+        render2 = t2.render(Context(self.context))
+
+        self.assertIn("var disqus_shortname = 'best_test_site_ever';", render1)
+        self.assertNotIn("var disqus_shortname = 'foobar';", render1)
+
+        self.assertIn("var disqus_shortname = 'best_test_site_ever';", render2)
+        self.assertIn('var disqus_identifier = "some_id";', render2)
+        self.assertIn('var disqus_title = "test title";', render2)
 
 
 class DisqusClientTest(TestCase):
@@ -112,8 +358,8 @@ class DisqusClientTest(TestCase):
 
         for api_method in DisqusClient.METHODS:
 
-            # str is not callable
             with self.assertRaises(TypeError):
+                # str is not callable
                 getattr(c, api_method)()
 
     @mock.patch('disqus.api.DisqusClient.call')
