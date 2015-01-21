@@ -47,13 +47,17 @@ def get_config(context):
     Return the formatted javascript for any disqus config variables.
     """
 
-    conf_vars = ['disqus_developer', 'disqus_identifier', 'disqus_url',
-        'disqus_title', 'disqus_category_id']
+    conf_vars = ['disqus_developer',
+                 'disqus_identifier',
+                 'disqus_url',
+                 'disqus_title',
+                 'disqus_category_id'
+                 ]
 
-    output = []
-    for item in conf_vars:
-        if item in context:
-            output.append('\tvar %s = "%s";' % (item, context[item]))
+    js = '\tvar {} = "{}";'
+
+    output = [js.format(item, context[item]) for item in conf_vars if item in context]
+
     return '\n'.join(output)
 
 @register.simple_tag(takes_context=True)
