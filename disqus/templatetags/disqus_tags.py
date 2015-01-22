@@ -60,18 +60,22 @@ def get_config(context):
 
     return '\n'.join(output)
 
-@register.simple_tag(takes_context=True)
+@register.inclusion_tag('disqus/disqus_dev.html', takes_context=True)
 def disqus_dev(context):
     """
     Return the HTML/js code to enable DISQUS comments on a local
     development server if settings.DEBUG is True.
     """
+
     if settings.DEBUG:
-        return """<script type="text/javascript">
-    var disqus_developer = 1;
-    var disqus_url = '//%s%s';
-</script>""" % (Site.objects.get_current().domain, context['request'].path)
-    return ""
+        disqus_url = '//{}{}'.format(
+            Site.objects.get_current().domain,
+            context['request'].path
+        )
+
+        return {'disqus_url': disqus_url}
+
+    return {}
 
 @register.simple_tag(takes_context=True)
 def disqus_sso(context):
