@@ -112,7 +112,16 @@ class DisqusTemplatetagsTest(TestCase):
 
     # Note: this is not tag.
     def test_get_config(self):
-        get_config({})
+
+        js = get_config(self.context)
+
+        self.assertIn('var disqus_developer = "some_developer";', js)
+        self.assertIn('var disqus_identifier = "some_id";', js)
+        self.assertIn('var disqus_category_id = "test category";', js)
+
+        self.assertNotIn('var request = "some_request";', js)
+
+        self.assertEqual(len(js.split('\n')), 5)
 
     def test_set_disqus_developer(self):
 
@@ -147,31 +156,49 @@ class DisqusTemplatetagsTest(TestCase):
     @override_settings(DEBUG=True)
     def test_disqus_dev_sets_full_url(self):
 
+        template = Template("""
+                            {% load disqus_tags %}
+                            {% disqus_dev %}
+                            """
+                            )
+
         test_domain = 'example.org'
         url_path = '/path/to/page'
-        full_url = '//%s%s' % (test_domain, url_path)
-        context = {'request': FakeRequest(path=url_path)}
 
         # mock out Site manager
         Site.objects = FakeSiteManager(test_domain, 'test')
-        generated_html = disqus_dev(context)
+
+        context = {'request': FakeRequest(path=url_path)}
+
+        generated_html = template.render(Context(context))
+
+        full_url = '//{}{}'.format(test_domain, url_path)
 
         self.assertIn(full_url, generated_html)
+        self.assertIn('var disqus_developer = 1;', generated_html)
+        self.assertEqual(disqus_dev(context), {'disqus_url': full_url})
 
     @override_settings(DEBUG=False)
     def test_disqus_dev_if_debug_is_false(self):
 
+        template = Template("""
+                            {% load disqus_tags %}
+                            {% disqus_dev %}
+                            """
+                            )
+
         test_domain = 'example.org'
         url_path = '/path/to/page'
         context = {'request': FakeRequest(path=url_path)}
 
         Site.objects = FakeSiteManager(test_domain, 'test')
 
-        generated_html = disqus_dev(context)
-        generated_html_ = disqus_dev({})
+        generated_html = template.render(Context(context))
 
-        self.assertEqual(generated_html, "")
-        self.assertEqual(generated_html_, "")
+        full_url = '//{}{}'.format(test_domain, url_path)
+
+        self.assertNotIn(full_url, generated_html)
+        self.assertEqual(disqus_dev(context), {})
 
     @override_settings(DISQUS_SECRET_KEY=None, DISQUS_PUBLIC_KEY=True)
     def test_disqus_sso_if_there_is_no_secret_key(self):
