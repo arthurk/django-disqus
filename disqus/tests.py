@@ -10,7 +10,11 @@ if not settings.configured:
 
 from django.contrib.sites.models import Site
 from django.test.utils import override_settings
-from unittest import TestCase, mock
+from unittest import TestCase
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from disqus.api import DisqusClient, DisqusException
 from django.utils.six.moves.urllib.error import URLError
@@ -523,8 +527,8 @@ class DisqusClientTest(TestCase):
                     **self.attr)
                 request_no_params = self.client._get_request(url, http_method)
 
-                self.assertEqual(request_params.host, 'disqus.com')
-                self.assertEqual(request_no_params.host, 'disqus.com')
+                self.assertEqual(request_params.get_host(), 'disqus.com')
+                self.assertEqual(request_no_params.get_host(), 'disqus.com')
 
                 # check actual request method
                 self.assertEqual(request_params.get_method(), http_method)
@@ -532,10 +536,11 @@ class DisqusClientTest(TestCase):
 
                 # getting url's query string
                 # since parameters passed to api_url from a dict, mean randomly
-                url_parsed1 = urlparse(request_params.full_url)
+
+                url_parsed1 = urlparse(request_params.get_full_url())
                 qs_params = parse_qs(url_parsed1.query)
 
-                url_parsed2 = urlparse(request_no_params.full_url)
+                url_parsed2 = urlparse(request_no_params.get_full_url())
                 qs_no_params = parse_qs(url_parsed2.query)
 
                 self.assertEqual(qs_params, attr_)
@@ -556,8 +561,8 @@ class DisqusClientTest(TestCase):
                                                           **self.attr)
                 request_no_params = self.client._get_request(url, http_method)
 
-                self.assertEqual(request_params.host, 'disqus.com')
-                self.assertEqual(request_no_params.host, 'disqus.com')
+                self.assertEqual(request_params.get_host(), 'disqus.com')
+                self.assertEqual(request_no_params.get_host(), 'disqus.com')
 
                 self.assertEqual(request_params.get_method(), http_method)
                 self.assertEqual(request_no_params.get_method(), http_method)
