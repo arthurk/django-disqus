@@ -415,22 +415,31 @@ class DisqusClientTest(TestCase):
     def test_init_if_passed_args_with_name_like_in_METHODS(self):
         c = DisqusClient(**DisqusClient.METHODS)
 
-        for api_method in DisqusClient.METHODS:
+        with self.assertRaises(TypeError):
+            # str is not callable
+            getattr(c, 'get_thread_list')()
 
-            with self.assertRaises(TypeError):
-                # str is not callable
-                getattr(c, api_method)()
+        with self.assertRaises(TypeError):
+            getattr(c, 'get_forum_posts')()
+
+        with self.assertRaises(TypeError):
+            getattr(c, 'moderate_post')()
 
     @mock.patch('disqus.api.DisqusClient.call')
     def test_call_method_is_triggered_by_api_methods_from_METHODS(self,
                                                                   call_mock):
 
-        for method in DisqusClient.METHODS:
+        call = getattr(self.client, 'get_user_name')
+        call(**self.attr)
+        call_mock.assert_called_with('get_user_name', **self.attr)
 
-            call = getattr(self.client, method)
-            call(**self.attr)
+        call = getattr(self.client, 'get_num_posts')
+        call(**self.attr)
+        call_mock.assert_called_with('get_num_posts', **self.attr)
 
-            call_mock.assert_called_with(method, **self.attr)
+        call = getattr(self.client, 'get_thread_by_url')
+        call(**self.attr)
+        call_mock.assert_called_with('get_thread_by_url', **self.attr)
 
     @mock.patch('disqus.api.urlopen', new_callable=FakeUrlopen)
     @mock.patch('disqus.api.DisqusClient._get_request')
@@ -482,7 +491,8 @@ class DisqusClientTest(TestCase):
 
         self.assertEqual(response, message)
 
-    @mock.patch('disqus.api.urlopen', new_callable=FakeUrlopenNegative)
+    @mock.patch('disqus.api.urlopen',
+                new_callable=FakeUrlopenNegative)
     def test_call_method_if_requst_is_not_succeeded(self, urlopen_mock):
 
         with self.assertRaises(DisqusException):
@@ -561,13 +571,24 @@ class DisqusClientTest(TestCase):
     # XXX maybe exception must be raised explicitly (DisqusException)
     def test__get_request_if_http_method_is_not_post_or_get(self):
 
-        for api_method in DisqusClient.METHODS:
-            url = self.client.api_url % api_method
+        url1 = self.client.api_url % 'get_forum_api_key'
+        url2 = self.client.api_url % 'create_post'
+        url3 = self.client.api_url % 'foobar'
 
-            with self.assertRaises(UnboundLocalError):
-                self.client._get_request(url, 'PUSH', **self.attr)
-            with self.assertRaises(UnboundLocalError):
-                self.client._get_request(url, 'PUSH')
+        with self.assertRaises(UnboundLocalError):
+            self.client._get_request(url1, 'PUSH', **self.attr)
+        with self.assertRaises(UnboundLocalError):
+            self.client._get_request(url1, 'PUSH')
+
+        with self.assertRaises(UnboundLocalError):
+            self.client._get_request(url2, 'PUSH', **self.attr)
+        with self.assertRaises(UnboundLocalError):
+            self.client._get_request(url2, 'PUSH')
+
+        with self.assertRaises(UnboundLocalError):
+            self.client._get_request(url3, 'PUSH', **self.attr)
+        with self.assertRaises(UnboundLocalError):
+            self.client._get_request(url3, 'PUSH')
 
     # XXX Don't know how to implement this and if should.
     def test_call_method_if_api_version_passed_as_method_argument(self):
