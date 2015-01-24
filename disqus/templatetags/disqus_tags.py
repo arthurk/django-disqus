@@ -118,7 +118,6 @@ def disqus_sso(context):
     # generate our hmac signature
     sig = hmac.HMAC(key, msg, digestmod).hexdigest()
 
-    # return a script tag to insert the sso message
     return  dict(
         message=message,
         timestamp=timestamp,

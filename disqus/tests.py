@@ -24,6 +24,7 @@ from disqus.templatetags.disqus_tags import (
     set_disqus_category_id,
     get_config,
     disqus_sso,
+    disqus_dev
 )
 
 
@@ -203,20 +204,26 @@ class DisqusTemplatetagsTest(TestCase):
     @override_settings(DISQUS_SECRET_KEY=None, DISQUS_PUBLIC_KEY=True)
     def test_disqus_sso_if_there_is_no_secret_key(self):
 
+        msg = 'You need to set DISQUS_SECRET_KEY before you can use SSO'
+
         output = disqus_sso({})
-        self.assertIn('You need to set DISQUS_SECRET_KEY before you can use SSO', output)
+        self.assertIn(msg, output)
 
     @override_settings(DISQUS_PUBLIC_KEY=None, DISQUS_SECRET_KEY=None)
     def test_disqus_sso_if_there_is_no_public_key_and_no_secret_key(self):
 
+        msg = 'You need to set DISQUS_SECRET_KEY before you can use SSO'
+
         output = disqus_sso({})
-        self.assertIn('You need to set DISQUS_SECRET_KEY before you can use SSO', output)
+        self.assertIn(msg, output)
 
     @override_settings(DISQUS_PUBLIC_KEY=None, DISQUS_SECRET_KEY=True)
     def test_disqus_sso_if_there_is_no_public_key(self):
 
+        msg = 'You need to set DISQUS_PUBLIC_KEY before you can use SSO'
+
         output = disqus_sso({})
-        self.assertIn('You need to set DISQUS_PUBLIC_KEY before you can use SSO', output)
+        self.assertIn(msg, output)
 
     @override_settings(DISQUS_PUBLIC_KEY=True, DISQUS_SECRET_KEY=True)
     def test_disqus_sso_if_user_is_anonymous(self):
@@ -239,28 +246,32 @@ class DisqusTemplatetagsTest(TestCase):
         private_key = 'b'*64
         timestamp = 1420070400
         data = json.dumps({
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
             })
 
         message = base64.b64encode(data.encode('utf-8'))
         msg = ('%s %s' % (message, timestamp)).encode('utf-8')
-        sig = hmac.HMAC(private_key.encode('utf-8'), msg, hashlib.sha1).hexdigest()
+        sig = hmac.HMAC(
+            private_key.encode('utf-8'),
+            msg,
+            hashlib.sha1).hexdigest()
 
         self.assertIn('disqus_config', output)
         self.assertIn('remote_auth_s3', output)
 
         self.assertIn(message.decode('utf-8'), output)
         self.assertIn(sig, output)
-        self.assertIn(timestamp, output)
+        self.assertIn(str(timestamp), output)
 
         self.assertIn('api_key = "{}"'.format(pub_key), output)
 
     def test_disqus_num_replies_without_settings(self):
 
         t1 = Template("{% load disqus_tags %} {% disqus_num_replies %}")
-        t2 = Template("{% load disqus_tags %} {% disqus_num_replies 'foobar' %}")
+        t2 = Template("""{% load disqus_tags %}
+                      {% disqus_num_replies 'foobar' %}""")
 
         render1 = t1.render(Context({}))
         render2 = t2.render(Context(self.context))
@@ -275,7 +286,8 @@ class DisqusTemplatetagsTest(TestCase):
     def test_disqus_num_replies_with_settings(self):
 
         t1 = Template("{% load disqus_tags %} {% disqus_show_comments %}")
-        t2 = Template("{% load disqus_tags %} {% disqus_show_comments 'foobar' %}")
+        t2 = Template("""{% load disqus_tags %}
+                      {% disqus_show_comments 'foobar' %}""")
 
         render1 = t1.render(Context({}))
         render2 = t2.render(Context(self.context))
@@ -296,7 +308,7 @@ class DisqusTemplatetagsTest(TestCase):
                       excerpt_length=400 \
                       hide_avatars=1 \
                       avatar_size=50 %}"
-                    )
+                      )
 
         render1 = t1.render(Context({}))
         render2 = t2.render(Context(self.context))
@@ -326,7 +338,7 @@ class DisqusTemplatetagsTest(TestCase):
                       excerpt_length=400 \
                       hide_avatars=1 \
                       avatar_size=50 %}"
-                    )
+                      )
 
         render1 = t1.render(Context({}))
         render2 = t2.render(Context(self.context))
@@ -349,7 +361,8 @@ class DisqusTemplatetagsTest(TestCase):
     def test_disqus_show_comments_without_settings(self):
 
         t1 = Template("{% load disqus_tags %} {% disqus_show_comments %}")
-        t2 = Template("{% load disqus_tags %} {% disqus_show_comments 'foobar' %}")
+        t2 = Template("""{% load disqus_tags %}
+                      {% disqus_show_comments 'foobar' %}""")
 
         render1 = t1.render(Context({}))
         render2 = t2.render(Context(self.context))
@@ -364,7 +377,8 @@ class DisqusTemplatetagsTest(TestCase):
     def test_disqus_show_comments_with_settings(self):
 
         t1 = Template("{% load disqus_tags %} {% disqus_show_comments %}")
-        t2 = Template("{% load disqus_tags %} {% disqus_show_comments 'foobar' %}")
+        t2 = Template("""{% load disqus_tags %}
+                      {% disqus_show_comments 'foobar' %}""")
 
         render1 = t1.render(Context({}))
         render2 = t2.render(Context(self.context))
@@ -398,7 +412,7 @@ class DisqusClientTest(TestCase):
             c.baz
 
     # XXX bug or feature?
-    def test_init_if_passed_args_with_name_like_in_METHODS_api_methods_become_overrided(self):
+    def test_init_if_passed_args_with_name_like_in_METHODS(self):
         c = DisqusClient(**DisqusClient.METHODS)
 
         for api_method in DisqusClient.METHODS:
@@ -408,7 +422,8 @@ class DisqusClientTest(TestCase):
                 getattr(c, api_method)()
 
     @mock.patch('disqus.api.DisqusClient.call')
-    def test_call_method_is_triggered_by_api_methods_from_METHODS(self, call_mock):
+    def test_call_method_is_triggered_by_api_methods_from_METHODS(self,
+                                                                  call_mock):
 
         for method in DisqusClient.METHODS:
 
@@ -419,7 +434,9 @@ class DisqusClientTest(TestCase):
 
     @mock.patch('disqus.api.urlopen', new_callable=FakeUrlopen)
     @mock.patch('disqus.api.DisqusClient._get_request')
-    def test__get_request_is_triggered_by_call_method(self, _get_request_mock, urlopen_mock):
+    def test__get_request_is_triggered_by_call_method(self,
+                                                      _get_request_mock,
+                                                      urlopen_mock):
 
         for method in DisqusClient.METHODS:
             url = self.client.api_url % method
@@ -427,10 +444,12 @@ class DisqusClientTest(TestCase):
             call = getattr(self.client, method)
             call(**self.attr)
 
-            _get_request_mock.assert_called_with(url, self.client.METHODS[method], **self.attr)
+            _get_request_mock.assert_called_with(
+                url, self.client.METHODS[method],
+                **self.attr)
 
     @mock.patch('disqus.api.urlopen', new_callable=FakeUrlopen)
-    def test_call_method_if_requst_is_succeeded_returns_a_json_message(self, urlopen_mock):
+    def test_call_method_if_requst_is_succeeded(self, urlopen_mock):
 
         rest_response = '''
                 {
@@ -464,28 +483,34 @@ class DisqusClientTest(TestCase):
         self.assertEqual(response, message)
 
     @mock.patch('disqus.api.urlopen', new_callable=FakeUrlopenNegative)
-    def test_call_method_if_requst_is_not_succeeded_raise_an_exception(self, urlopen_mock):
+    def test_call_method_if_requst_is_not_succeeded(self, urlopen_mock):
 
         with self.assertRaises(DisqusException):
 
             self.client.get_forum_list()
 
     @mock.patch('disqus.api.DisqusClient._get_request')
-    def test_call_method_if_during_request_error_occurred_raise_an_exception(self, _get_request_mock):
+    def test_call_method_if_during_request_error_occurred(self,
+                                                          _get_request_mock):
 
         with self.assertRaises(URLError):
             self.client.create_post()
 
-    def test__get_request_if_http_method_is_get_returns_a_get_request(self):
+    def test__get_request_if_http_method_is_get(self):
 
-        attr_ = {'user_api_key': ['spam'], 'developer_api_key': ['ham'], 'api_version': ['1.1']}
+        attr_ = {'user_api_key': ['spam'],
+                 'developer_api_key': ['ham'],
+                 'api_version': ['1.1']
+                 }
 
         for api_method, http_method in DisqusClient.METHODS.items():
             if http_method == "GET":
 
                 url = self.client.api_url % api_method
 
-                request_params = self.client._get_request(url, http_method, **self.attr)
+                request_params = self.client._get_request(
+                    url, http_method,
+                    **self.attr)
                 request_no_params = self.client._get_request(url, http_method)
 
                 self.assertEqual(request_params.host, 'disqus.com')
@@ -507,7 +532,7 @@ class DisqusClientTest(TestCase):
                 # hardcoded in api_url
                 self.assertEqual(qs_no_params, {'api_version': ['1.1']})
 
-    def test__get_request_if_http_method_is_post_returns_a_post_request(self):
+    def test__get_request_if_http_method_is_post(self):
 
         attr_ = {'user_api_key': ['spam'], 'developer_api_key': ['ham']}
 
@@ -516,7 +541,9 @@ class DisqusClientTest(TestCase):
 
                 url = self.client.api_url % api_method
 
-                request_params = self.client._get_request(url, http_method, **self.attr)
+                request_params = self.client._get_request(url,
+                                                          http_method,
+                                                          **self.attr)
                 request_no_params = self.client._get_request(url, http_method)
 
                 self.assertEqual(request_params.host, 'disqus.com')
@@ -532,7 +559,7 @@ class DisqusClientTest(TestCase):
                 self.assertEqual(qs_no_params, {})
 
     # XXX maybe exception must be raised explicitly (DisqusException)
-    def test__get_request_if_http_method_is_not_post_or_get_raise_an_exception(self):
+    def test__get_request_if_http_method_is_not_post_or_get(self):
 
         for api_method in DisqusClient.METHODS:
             url = self.client.api_url % api_method
