@@ -1,5 +1,8 @@
 import unittest
 import json
+import base64
+import hashlib
+import hmac
 
 from django.conf import settings
 if not settings.configured:
@@ -13,18 +16,15 @@ from disqus.api import DisqusClient, DisqusException
 from django.utils.six.moves.urllib.error import URLError
 from django.utils.six.moves.urllib.parse import parse_qs, urlparse
 from django.template import Context, Template
-from disqus.templatetags.disqus_tags import (set_disqus_developer,
-                                             set_disqus_identifier,
-                                             set_disqus_url,
-                                             set_disqus_title,
-                                             set_disqus_category_id,
-                                             get_config,
-                                             disqus_dev,
-                                             disqus_sso,
-                                             disqus_num_replies,
-                                             disqus_recent_comments,
-                                             disqus_show_comments
-                                            )
+from disqus.templatetags.disqus_tags import (
+    set_disqus_developer,
+    set_disqus_identifier,
+    set_disqus_url,
+    set_disqus_title,
+    set_disqus_category_id,
+    get_config,
+    disqus_sso,
+)
 
 
 class FakeRequest(object):
@@ -226,18 +226,36 @@ class DisqusTemplatetagsTest(TestCase):
         output = disqus_sso(context)
         self.assertEqual(output, '')
 
-    # TODO
+    @mock.patch('disqus.templatetags.disqus_tags.time.time', lambda: 1420070400)
     @override_settings(DISQUS_PUBLIC_KEY='a'*64, DISQUS_SECRET_KEY='b'*64)
     def test_disqus_sso_if_all_inner_tests_passed(self):
 
-        context = {'user': FakeUser()}
-        key = 'a'*64
+        t = Template("{% load disqus_tags %} {% disqus_sso %}")
+        user = FakeUser()
+        context = {'user': user}
+        output = t.render(Context(context))
 
-        output = disqus_sso(context)
+        pub_key = 'a'*64
+        private_key = 'b'*64
+        timestamp = 1420070400
+        data = json.dumps({
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+            })
+
+        message = base64.b64encode(data.encode('utf-8'))
+        msg = ('%s %s' % (message, timestamp)).encode('utf-8')
+        sig = hmac.HMAC(private_key.encode('utf-8'), msg, hashlib.sha1).hexdigest()
 
         self.assertIn('disqus_config', output)
         self.assertIn('remote_auth_s3', output)
-        self.assertIn('api_key = "{}"'.format(key), output)
+
+        self.assertIn(message.decode('utf-8'), output)
+        self.assertIn(sig, output)
+        self.assertIn(timestamp, output)
+
+        self.assertIn('api_key = "{}"'.format(pub_key), output)
 
     def test_disqus_num_replies_without_settings(self):
 

@@ -56,7 +56,8 @@ def get_config(context):
 
     js = '\tvar {} = "{}";'
 
-    output = [js.format(item, context[item]) for item in conf_vars if item in context]
+    output = [js.format(item, context[item]) for item in conf_vars \
+              if item in context]
 
     return '\n'.join(output)
 
@@ -77,7 +78,7 @@ def disqus_dev(context):
 
     return {}
 
-@register.simple_tag(takes_context=True)
+@register.inclusion_tag('disqus/disqus_sso.html', takes_context=True)
 def disqus_sso(context):
     """
     Return the HTML/js code to enable DISQUS SSO - so logged in users on
@@ -118,12 +119,7 @@ def disqus_sso(context):
     sig = hmac.HMAC(key, msg, digestmod).hexdigest()
 
     # return a script tag to insert the sso message
-    return """<script type="text/javascript">
-var disqus_config = function() {
-this.page.remote_auth_s3 = "%(message)s %(sig)s %(timestamp)s";
-this.page.api_key = "%(pub_key)s";
-}
-</script>""" % dict(
+    return  dict(
         message=message,
         timestamp=timestamp,
         sig=sig,
