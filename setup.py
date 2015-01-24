@@ -26,4 +26,8 @@ setup(
     include_package_data=True,
     packages=find_packages(),
     zip_safe=False,
+    install_requires=[
+    'Django>=1.4',
+    'mock>=1.0.1',
+    ],
 )
