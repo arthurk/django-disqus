@@ -1,7 +1,8 @@
-from urllib import urlencode
 try:
+    from urllib.parse import urlencode
     import urllib.request as urllib2
 except ImportError:
+    from urllib import urlencode
     import urllib2
 import json
 
