@@ -9,11 +9,13 @@ from disqus.api import DisqusClient
 class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
         make_option('--indent', default=None, dest='indent', type='int',
-            help='Specifies the indent level to use when pretty-printing output'),
+                    help='Specifies the indent level to use when'
+                    'pretty-printing output'),
         make_option('--filter', default='', dest='filter', type='str',
-            help='Type of entries that should be returned'),
+                    help='Type of entries that should be returned'),
         make_option('--exclude', default='', dest='exclude', type='str',
-            help='Type of entries that should be excluded from the response'),
+                    help='Type of entries that should be excluded'
+                    'from the response'),
     )
     help = 'Output DISQUS data in JSON format'
     requires_model_validation = False
@@ -29,9 +31,10 @@ class Command(NoArgsCommand):
         # Get a list of all forums for an API key. Each API key can have
         # multiple forums associated. This application only supports the one
         # set in the DISQUS_WEBSITE_SHORTNAME variable
-        forum_list = client.get_forum_list(user_api_key=settings.DISQUS_API_KEY)
+        forum_list = client.get_forum_list(
+            user_api_key=settings.DISQUS_API_KEY)
         try:
-            forum = [f for f in forum_list\
+            forum = [f for f in forum_list
                      if f['shortname'] == settings.DISQUS_WEBSITE_SHORTNAME][0]
         except IndexError:
             raise CommandError("Could not find forum. " +
@@ -46,7 +49,7 @@ class Command(NoArgsCommand):
                 user_api_key=settings.DISQUS_API_KEY,
                 forum_id=forum['id'],
                 start=start,
-                limit=start+step,
+                limit=start + step,
                 filter=filter_,
                 exclude=exclude)
             if not new_posts:
@@ -54,4 +57,4 @@ class Command(NoArgsCommand):
             else:
                 start += step
                 posts.append(new_posts)
-        print json.dumps(posts, indent=indent)
+        print(json.dumps(posts, indent=indent))

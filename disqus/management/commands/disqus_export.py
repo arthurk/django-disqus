@@ -1,11 +1,10 @@
-import json
 from optparse import make_option
 import os.path
 
 from django.conf import settings
 from django.contrib import comments
 from django.contrib.sites.models import Site
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import NoArgsCommand, CommandError
 
 from disqus.api import DisqusClient
 
@@ -25,9 +24,9 @@ class Command(NoArgsCommand):
     def _get_comments_to_export(self, last_export_id=None):
         """Return comments which should be exported."""
         qs = comments.get_model().objects.order_by('pk')\
-                .filter(is_public=True, is_removed=False)
+            .filter(is_public=True, is_removed=False)
         if last_export_id is not None:
-            print "Resuming after comment %s" % str(last_export_id)
+            print("Resuming after comment %s" % str(last_export_id))
             qs = qs.filter(id__gt=last_export_id)
         return qs
 
@@ -37,7 +36,7 @@ class Command(NoArgsCommand):
         fp = open(state_file)
         try:
             state = int(fp.read())
-            print "Found previous state: %d" % (state,)
+            print("Found previous state: %d" % (state,))
         finally:
             fp.close()
         return state
@@ -64,11 +63,11 @@ class Command(NoArgsCommand):
         comments = self._get_comments_to_export(last_exported_id)
         comments_count = comments.count()
         if verbosity >= 1:
-            print "Exporting %d comment(s)" % comments_count
+            print("Exporting %d comment(s)" % comments_count)
 
         # if this is a dry run, we output the comments and exit
         if dry_run:
-            print comments
+            print(comments)
             return
         # if no comments were found we also exit
         if not comments_count:
@@ -77,9 +76,10 @@ class Command(NoArgsCommand):
         # Get a list of all forums for an API key. Each API key can have
         # multiple forums associated. This application only supports the one
         # set in the DISQUS_WEBSITE_SHORTNAME variable
-        forum_list = client.get_forum_list(user_api_key=settings.DISQUS_API_KEY)
+        forum_list = client.get_forum_list(
+            user_api_key=settings.DISQUS_API_KEY)
         try:
-            forum = [f for f in forum_list\
+            forum = [f for f in forum_list
                      if f['shortname'] == settings.DISQUS_WEBSITE_SHORTNAME][0]
         except IndexError:
             raise CommandError("Could not find forum. " +
@@ -93,7 +93,7 @@ class Command(NoArgsCommand):
 
         for comment in comments:
             if verbosity >= 1:
-                print "Exporting comment '%s'" % comment
+                print("Exporting comment '%s'" % comment)
 
             # Try to find a thread with the comments URL.
             url = 'http://%s%s' % (

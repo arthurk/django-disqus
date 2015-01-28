@@ -1,9 +1,12 @@
 import json
 import urllib
-import urllib2
+try:
+    import urllib.request as urllib2
+except ImportError:
+    import urllib2
 
 from django.core.management.base import CommandError
-from django.conf import settings
+
 
 def call(method, data, post=False):
     """
@@ -21,5 +24,6 @@ def call(method, data, post=False):
         data = ''
     res = json.load(urllib2.urlopen(url, data))
     if not res['succeeded']:
-        raise CommandError("'%s' failed: %s\nData: %s" % (method, res['code'], data))
+        raise CommandError(
+            "'%s' failed: %s\nData: %s" % (method, res['code'], data))
     return res['message']

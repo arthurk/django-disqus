@@ -5,7 +5,6 @@ if not settings.configured:
     settings.configure()
 
 from django.contrib.sites.models import Site
-from django.core.management.base import CommandError
 from django.test.utils import override_settings
 from unittest import TestCase
 
