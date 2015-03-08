@@ -1,16 +1,21 @@
-from urllib import urlencode
-import urllib2
+import json
 
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
+from django.utils.six.moves.urllib.parse import urlencode
+from django.utils.six.moves.urllib.error import URLError
+from django.utils.six.moves.urllib.request import (
+    ProxyHandler,
+    Request,
+    urlopen,
+    build_opener,
+    install_opener
+)
 
-# A custom ProxyHandler for the urllib2 module that will not
-# auto-detect proxy settings
-proxy_support = urllib2.ProxyHandler({})
-opener = urllib2.build_opener(proxy_support)
-urllib2.install_opener(opener)
+
+# A custom ProxyHandler that will not auto-detect proxy settings
+proxy_support = ProxyHandler({})
+opener = build_opener(proxy_support)
+install_opener(opener)
+
 
 class DisqusException(Exception):
     """Exception raised for errors with the DISQUS API."""
@@ -59,15 +64,15 @@ class DisqusClient(object):
 
     def _get_request(self, request_url, request_method, **params):
         """
-        Return a urllib2.Request object that has the GET parameters
+        Return a Request object that has the GET parameters
         attached to the url or the POST data attached to the object.
         """
         if request_method == 'GET':
             if params:
                 request_url += '&%s' % urlencode(params)
-            request = urllib2.Request(request_url)
+            request = Request(request_url)
         elif request_method == 'POST':
-            request = urllib2.Request(request_url, urlencode(params,doseq=1))
+            request = Request(request_url, urlencode(params, doseq=1))
         return request
 
     def call(self, method, **params):
@@ -79,8 +84,8 @@ class DisqusClient(object):
         url = self.api_url % method
         request = self._get_request(url, self.METHODS[method], **params)
         try:
-            response = urllib2.urlopen(request)
-        except urllib2.URLError, e:
+            response = urlopen(request)
+        except URLError:
             raise
         else:
             response_json = json.loads(response.read())
