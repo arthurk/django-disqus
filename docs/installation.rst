@@ -52,5 +52,5 @@ don't have contrib.admin installed (or don't want to install it), you can run
     >>> Site.objects.all()
     [<Site: arthurkoziel.com>]
 
-.. _get your API key here: http://disqus.com/api/get_my_key/
+.. _get your API key here: http://disqus.com/api/applications/
 .. _DISQUS: http://disqus.com
