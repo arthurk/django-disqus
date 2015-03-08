@@ -1,4 +1,4 @@
-Copyright (c) 2009-2011, Arthur Koziel
+Copyright (c) 2009-2015, Arthur Koziel
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
