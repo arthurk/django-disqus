@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+django-disqus 0.5 (08-MAR-2015)
+---------------------------------
+
+- Python 3.4 support
+- Django 1.7 support
+- Improved unit tests
+
+Thanks a lot to `Alexey Kalinin <https://github.com/Alkalit>`_,
+and also everyone else who submitted PR's regarding the
+Django 1.7 support.
+
 django-disqus 0.4.1 (19-APR-2011)
 ---------------------------------
 
