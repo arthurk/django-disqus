@@ -59,13 +59,13 @@ Example output::
 **Options**:
 
  - ``--indent``: Specifies the indent level to use when pretty-printing output.
-   Example: ``./manage.py dumpdata --indent=4``
+   Example: ``./manage.py disqus_dumpdata --indent=4``
  - ``--filter``: Type of entries (approved, spam, killed) that should be
    returned. Types can be combined by separating them with a comma. Example:
-   ``./manage.py dumpdata --filter=spam,killed``
+   ``./manage.py disqus_dumpdata --filter=spam,killed``
  - ``--exclude``: Type of entries (approved, spam, killed) that should be
    excluded. Types can be combined by separating them with a comma. Example:
-   ``./manage.py dumpdata --exclude=spam,killed``
+   ``./manage.py disqus_dumpdata --exclude=spam,killed``
 
 disqus_export
 -------------
