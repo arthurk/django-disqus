@@ -130,7 +130,7 @@ set_disqus_developer
 Adds ``disqus_developer`` variable to the context for the current block. The
 context variable is used in the :ref:`disqus_show_comments` and 
 :ref:`disqus_num_replies` templatetags for signaling Disqus you are in
-testing mode. See `JavaScript configuration vairables documentation <http://docs.disqus.com/help/2/>`_
+testing mode. See `JavaScript configuration variables documentation <http://docs.disqus.com/help/2/>`_
 for more information.
 
 Example::
@@ -173,7 +173,7 @@ variable is used in the :ref:`disqus_show_comments` and :ref:`disqus_num_replies
 templatetags to assign a the URL for this page. This is very important if
 there are several ways to reach this page (mobile and desktop versions, for
 example). The value can be a static value or a variable. See 
-`JavaScript configuration vairables documentation <http://docs.disqus.com/help/2/>`_
+`JavaScript configuration variables documentation <http://docs.disqus.com/help/2/>`_
 for more information.
 
 Example::
@@ -191,7 +191,7 @@ context variable is used in the :ref:`disqus_show_comments` and
 :ref:`disqus_num_replies` templatetags to assign a title for this page. If
 your ``<title>`` tag contains extra cruft, this is useful for setting a
 easier to read title. The value can be a static value or a variable.  See 
-`JavaScript configuration vairables documentation <http://docs.disqus.com/help/2/>`_
+`JavaScript configuration variables documentation <http://docs.disqus.com/help/2/>`_
 for more information.
 
 Example::
