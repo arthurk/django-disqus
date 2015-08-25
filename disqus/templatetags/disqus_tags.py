@@ -93,20 +93,30 @@ def disqus_sso(context):
     if DISQUS_PUBLIC_KEY is None:
         return "<p>You need to set DISQUS_PUBLIC_KEY before you can use SSO</p>"
 
+    SSO_AVATAR = getattr(settings, 'SSO_AVATAR', None)
+    SSO_NAME = getattr(settings, 'SSO_NAME', None)
+    SSO_BUTTON = getattr(settings, 'SSO_BUTTON', None)
+    SSO_ICON = getattr(settings, 'SSO_ICON', None)
+    SSO_URL = getattr(settings, 'SSO_URL', None)
+    SSO_LOGOUT = getattr(settings, 'SSO_LOGOUT', None)
+    SSO_WIDTH = getattr(settings, 'SSO_WIDTH', None)
+    SSO_HEIGHT = getattr(settings, 'SSO_HEIGHT', None)
+
     user = context['user']
 
-    if user.is_anonymous():
-        return ""
+    if user.is_authenticated():
+        # create a JSON packet of our data attributes
+        data = json.dumps({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'avatar': eval(SSO_AVATAR),
+        })
 
-    # create a JSON packet of our data attributes
-    data = json.dumps({
-        'id': user.id,
-        'username': user.username,
-        'email': user.email,
-    })
-
-    # encode the data to base64
-    message = base64.b64encode(data.encode('utf-8'))
+        # encode the data to base64
+        message = base64.b64encode(data.encode('utf-8')).decode()
+    else:
+        message = None
 
     # generate a timestamp for signing the message
     timestamp = int(time.time())
@@ -119,10 +129,17 @@ def disqus_sso(context):
     sig = hmac.HMAC(key, msg, digestmod).hexdigest()
 
     return  dict(
-        message=message,
-        timestamp=timestamp,
-        sig=sig,
-        pub_key=DISQUS_PUBLIC_KEY,
+        message = message,
+        timestamp = timestamp,
+        sig = sig,
+        pub_key = DISQUS_PUBLIC_KEY,
+        SSO_NAME = SSO_NAME,
+        SSO_BUTTON = SSO_BUTTON,
+        SSO_ICON = SSO_ICON,
+        SSO_URL = SSO_URL,
+        SSO_LOGOUT = SSO_LOGOUT,
+        SSO_WIDTH = SSO_WIDTH,
+        SSO_HEIGHT = SSO_HEIGHT,
     )
 
 @register.inclusion_tag('disqus/num_replies.html', takes_context=True)
