@@ -9,4 +9,4 @@ Features:
 - Templatetags
 - Exporting Comments as WXR
 
-The documentation is available at [http://django-disqus.readthedocs.org/](http://django-disqus.readthedocs.org/).
+The documentation is available at [https://django-disqus.readthedocs.io/](https://django-disqus.readthedocs.io/).
