@@ -2,5 +2,16 @@
     var disqus_config = function() {
         this.page.remote_auth_s3 = "{{ message }} {{ sig }} {{ timestamp }}";
         this.page.api_key = "{{ pub_key }}";
+
+        // This adds the custom login/logout functionality
+        this.sso = {
+              {% if SSO_NAME %}name:   "{{ SSO_NAME }}",{% endif %}
+              {% if SSO_BUTTON %}button: "{{ SSO_BUTTON }}",{% endif %}
+              {% if SSO_ICON %}icon:   "{{ SSO_ICON }}",{% endif %}
+              {% if SSO_URL %}url:    "{{ SSO_URL }}",{% endif %}
+              {% if SSO_LOGOUT %}logout: "{{ SSO_LOGOUT }}",{% endif %}
+              {% if SSO_WIDTH %}width:  "{{ SSO_WIDTH }}",{% endif %}
+              {% if SSO_HEIGHT %}height: "{{ SSO_HEIGHT }}",{% endif %}
+        };
     }
 </script>
