@@ -20,7 +20,7 @@ def set_disqus_developer(context, disqus_developer):
 # Set the disqus_identifier variable to some unique value. Defaults to page's URL
 @register.simple_tag(takes_context=True)
 def set_disqus_identifier(context, *args):
-    context['disqus_identifier'] = "".join(args)
+    context['disqus_identifier'] = ''.join(map(str, args))
     return ""
 
 # Set the disqus_url variable to some value. Defaults to page's location
