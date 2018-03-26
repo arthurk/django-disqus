@@ -8,7 +8,7 @@ setup(
     description='Export comments and integrate DISQUS into your Django website',
     author='Arthur Koziel',
     author_email='arthur@arthurkoziel.com',
-    url='http://django-disqus.readthedocs.org',
+    url='https://django-disqus.readthedocs.io',
     license='New BSD License',
     classifiers=[
       'Framework :: Django',
