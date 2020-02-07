@@ -23,8 +23,8 @@ if not settings.configured:
         apps.populate(settings.INSTALLED_APPS)
 
 
-from django.test.simple import DjangoTestSuiteRunner
-test_runner = DjangoTestSuiteRunner(verbosity=1, interactive=True)
+from django.test.runner import DiscoverRunner
+test_runner = DiscoverRunner(verbosity=1, interactive=True)
 
 
 def runtests(*test_args):
