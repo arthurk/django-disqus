@@ -1,8 +1,8 @@
 import json
 
-from django.utils.six.moves.urllib.parse import urlencode
-from django.utils.six.moves.urllib.error import URLError
-from django.utils.six.moves.urllib.request import (
+from six.moves.urllib.parse import urlencode
+from six.moves.urllib.error import URLError
+from six.moves.urllib.request import (
     ProxyHandler,
     Request,
     urlopen,

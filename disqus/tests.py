@@ -17,8 +17,8 @@ except ImportError:
     import mock
 
 from disqus.api import DisqusClient, DisqusException
-from django.utils.six.moves.urllib.error import URLError
-from django.utils.six.moves.urllib.parse import parse_qs, urlparse
+from six.moves.urllib.error import URLError
+from six.moves.urllib.parse import parse_qs, urlparse
 from django.template import Context, Template
 from disqus.templatetags.disqus_tags import (
     set_disqus_developer,
