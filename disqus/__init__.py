@@ -1,7 +1,7 @@
 import json
+from urllib.request import urlopen
+from urllib.parse import urlencode
 
-from django.utils.six.moves.urllib.parse import urlencode
-from django.utils.six.moves.urllib.request import urlopen
 from django.core.management.base import CommandError
 
 
