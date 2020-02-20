@@ -1,8 +1,8 @@
-import base64
-import hashlib
 import hmac
 import json
 import time
+import base64
+import hashlib
 
 from django import template
 from django.conf import settings
@@ -17,11 +17,13 @@ def set_disqus_developer(context, disqus_developer):
     context['disqus_developer'] = disqus_developer
     return ""
 
+
 # Set the disqus_identifier variable to some unique value. Defaults to page's URL
 @register.simple_tag(takes_context=True)
 def set_disqus_identifier(context, *args):
     context['disqus_identifier'] = "".join(args)
     return ""
+
 
 # Set the disqus_url variable to some value. Defaults to page's location
 @register.simple_tag(takes_context=True)
@@ -29,11 +31,13 @@ def set_disqus_url(context, *args):
     context['disqus_url'] = "".join(args)
     return ""
 
+
 # Set the disqus_title variable to some value. Defaults to page's title or URL
 @register.simple_tag(takes_context=True)
 def set_disqus_title(context, disqus_title):
     context['disqus_title'] = disqus_title
     return ""
+
 
 # Set the disqus_category_id variable to some value. No default. See
 # http://help.disqus.com/customer/portal/articles/472098-javascript-configuration-variables#disqus_category_id
@@ -41,6 +45,7 @@ def set_disqus_title(context, disqus_title):
 def set_disqus_category_id(context, disqus_category_id):
     context['disqus_category_id'] = disqus_category_id
     return ""
+
 
 def get_config(context):
     """
@@ -54,29 +59,40 @@ def get_config(context):
                  'disqus_category_id'
                  ]
 
-    js = '\tvar {} = "{}";'
+    conf_map = {
+        'disqus_identifier': 'this.page.identifier',
+        'disqus_url': 'this.page.url',
+        'disqus_title': 'this.page.title',
+        'disqus_category_id': 'this.page.category_id',
+    }
 
-    output = [js.format(item, context[item]) for item in conf_vars \
-              if item in context]
+    js = '{0} = "{1}";'
+
+    if settings.DEBUG:
+        # Add these default settings if not set. Useful for
+        # local dev.
+        disqus_url = '{0}://{1}{2}'.format(
+            'https' if context['request'].is_secure() else 'http',
+            Site.objects.get_current().domain,
+            context['request'].path
+        )
+        for x in ['disqus_url', 'disqus_identifier']:
+            if x not in context:
+                context[x] = disqus_url
+
+    output = [js.format(conf_map[item], context[item]) for item in conf_vars \
+              if item in context and item in conf_map]
 
     return '\n'.join(output)
+
 
 @register.inclusion_tag('disqus/disqus_dev.html', takes_context=True)
 def disqus_dev(context):
     """
-    Return the HTML/js code to enable DISQUS comments on a local
-    development server if settings.DEBUG is True.
+    No longer supported by Disqus
     """
-
-    if settings.DEBUG:
-        disqus_url = '//{}{}'.format(
-            Site.objects.get_current().domain,
-            context['request'].path
-        )
-
-        return {'disqus_url': disqus_url}
-
     return {}
+
 
 @register.inclusion_tag('disqus/disqus_sso.html', takes_context=True)
 def disqus_sso(context):
@@ -112,18 +128,19 @@ def disqus_sso(context):
     timestamp = int(time.time())
 
     key = DISQUS_SECRET_KEY.encode('utf-8')
-    msg = ('%s %s' % (message, timestamp)).encode('utf-8')
+    msg = ('{0} {1}'.format(message, timestamp)).encode('utf-8')
     digestmod = hashlib.sha1
 
     # generate our hmac signature
     sig = hmac.HMAC(key, msg, digestmod).hexdigest()
 
-    return  dict(
+    return dict(
         message=message,
         timestamp=timestamp,
         sig=sig,
         pub_key=DISQUS_PUBLIC_KEY,
     )
+
 
 @register.inclusion_tag('disqus/num_replies.html', takes_context=True)
 def disqus_num_replies(context, shortname=''):
@@ -137,6 +154,7 @@ def disqus_num_replies(context, shortname=''):
         'shortname': shortname,
         'config': get_config(context),
     }
+
 
 @register.inclusion_tag('disqus/recent_comments.html', takes_context=True)
 def disqus_recent_comments(context, shortname='', num_items=5, excerpt_length=200, hide_avatars=0, avatar_size=32):
@@ -153,6 +171,7 @@ def disqus_recent_comments(context, shortname='', num_items=5, excerpt_length=20
         'excerpt_length': excerpt_length,
         'config': get_config(context),
     }
+
 
 @register.inclusion_tag('disqus/show_comments.html', takes_context=True)
 def disqus_show_comments(context, shortname=''):
